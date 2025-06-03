@@ -1,9 +1,22 @@
+import netscape.javascript.JSObject;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class ClientJavaGET {
+public class ClientAPI {
+
+    public JsonObject getMission(String uuid){
+        return null;
+    }
+
+    public void envoyerEtat(JSONObject message){
+
+    }
+
+    public JSONArray lireMessage(){
+        return null;
+    }
 
     public static void recupererMessages() {
         try {
