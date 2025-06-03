@@ -32,6 +32,17 @@ style.map("ModeAuto.TButton",
     background=[("active", "#f59e0b")]
 )
 
+# Style pour le bouton "Envoyer texte"
+style.configure("SendText.TButton",
+    font=("Segoe UI", 10),
+    background="#10b981",
+    foreground="white",
+    padding=5
+)
+style.map("SendText.TButton",
+    background=[("active", "#059669")]
+)
+
 # Style pour le bouton Quitter
 style.configure("btnQuit.TButton",
     font=("Segoe UI", 10),
@@ -81,8 +92,13 @@ left_label.pack(anchor="w", pady=(0, 5))  # aligné à gauche
 text_input = Text(left_box, width=30, height=10)
 text_input.pack(fill="both", expand=True)
 
-btnSendText = ttk.Button(left_box, text="Envoyer texte", command=lambda: envoyer_commande(text_input.get("1.0", "end").strip(), text_output))
-btnSendText.pack(pady=10)
+btnSendText = ttk.Button(
+    left_box,
+    text="Envoyer texte",
+    style="SendText.TButton",
+    command=lambda: envoyer_commande(text_input.get("1.0", "end").strip(), text_output)
+)
+btnSendText.pack(side="right", padx=5, pady=5)
 
 # Frame pour la zone de droite (output)
 right_box = Frame(text_frame, bg="#f3f4f6")
