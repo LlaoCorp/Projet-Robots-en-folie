@@ -86,7 +86,7 @@ right_box.pack(side="right", padx=20, fill="both", expand=True)
 
 right_label = Label(right_box, text="Réponse du robot :", font=("Segoe UI", 12), bg="#f3f4f6", fg="#1f2937")
 right_label.pack(anchor="w", pady=(0, 5))
-text_output = Text(right_box, width=30, height=10)
+text_output = Text(right_box, width=30, height=10, state="disabled")
 text_output.pack(fill="both", expand=True)
 
 # Frame de bas de page pour placer le bouton quitter correctement
