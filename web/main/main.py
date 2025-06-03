@@ -1,31 +1,27 @@
-from fastapi import FastAPI
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import uvicorn
-from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI
+from uuid import uuid4
+from gestion import enregistrer_message, lire_messages
+from database.base_model import Message
 
 app = FastAPI()
 
-origins = [
-    "http://localhost",
-    "http://localhost:8000"
-    "http://localhost:8080",
-    "http://0.0.0.0:8000",
-    "http://10.7.4.134",
-    "http://10.7.5.176"
-]
+@app.post("/envoyer/")
+async def envoyer_message(msg: Message):
+    enregistrer_message(msg)
+    return {"status": "ok", "message": msg.contenu}
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+@app.get("/messages/")
+async def get_messages():
+    return lire_messages()
 
-@app.get("/")
-def root():
-    return {"hi :3"}
+@app.get("/ping/")
+async def ping():
+    return {"message": "pong"}
 
 if __name__ == "__main__":
-    uvicorn.run("main:app",port=8000,reload=True)
+    uvicorn.run("main:app", reload=True, port=8000)
