@@ -27,9 +27,5 @@ public class ClientJavaGET {
             e.printStackTrace();
         }
     }
-
-    public static void main(String[] args) {
-        recupererMessages();
-    }
 }
 

@@ -27,8 +27,4 @@ public class SimulateurJava {
             e.printStackTrace();
         }
     }
-
-    public static void main(String[] args) {
-        envoyerMessage("robot-simu-001", "test");
-    }
 }
