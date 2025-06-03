@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk
+from test import *
 
 # Fenêtre plein écran mode immersif
 fenetre = Tk()
