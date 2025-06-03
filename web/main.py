@@ -28,4 +28,4 @@ def root():
     return {"hi :3"}
 
 if __name__ == "__main__":
-    uvicorn.run(app,debug=True,port=8000)
+    uvicorn.run("main:app",port=8000,reload=True)
