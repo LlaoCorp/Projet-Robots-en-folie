@@ -6,13 +6,20 @@ curseur = conn.cursor()
 curseur.execute("""
 CREATE TABLE IF NOT EXISTS messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    ref_id TEXT,
-    contenu TEXT
+    ref_id SECONDARY KEY,
+    contenu TEXT,
+    FOREIGN KEY (ref_id) REFERENCES ref(id)
+)
+CREATE TABLE IF NOT EXISTS ref (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
 )
 """)
 conn.commit()
 
 def ajouter_message(ref_id, contenu):
+    curseur.execute("SELECT COUNT(*) FROM ref WHERE id = ?", (ref_id))
+    if curseur.fetchone()[0] != 0:
+        curseur.execute("INSERT INTO ref (id) VALUES (?)", (ref_id))
     curseur.execute("INSERT INTO messages (ref_id, contenu) VALUES (?, ?)", (ref_id, contenu))
     conn.commit()
 

@@ -4,9 +4,10 @@ import datetime
 API_URL = "http://localhost:8000/envoyer/"  # correspond au endpoint du POST
 
 def envoyer_commande(commande, text_output):
+    print("commande = ", commande)
     try:
         data = {
-            "robot_id": "1234-uuid",  # à adapter plus tard (voir Pydantic)
+            "ref_id": "1234-uuid",  # à adapter plus tard (voir Pydantic)
             "contenu": commande
         }
 
@@ -16,7 +17,7 @@ def envoyer_commande(commande, text_output):
             resultat = response.json()
             afficher_output(f"✅ {resultat['message']}", text_output)
         else:
-            afficher_output(f"❌ Erreur : {response.status_code} : {response.json()}", text_output)
+            afficher_output(f"❌ Erreur : {response.status_code} : {response.text}", text_output)
     except Exception as e:
         afficher_output(f"⚠️ Exception : {e}", text_output)
 

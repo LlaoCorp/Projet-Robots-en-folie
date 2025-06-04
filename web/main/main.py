@@ -19,9 +19,10 @@ async def envoyer_message(msg: Message):
 async def get_messages():
     return lire_messages()
 
-@app.get("/ping/")
-async def ping():
-    return {"message": "pong"}
+# @app.post("/create_ref/")
+# async def create_ref():
+#     ref_id = str(uuid4())
+#     return {"ref_id": ref_id}
 
 if __name__ == "__main__":
     uvicorn.run("main:app", reload=True, port=8000)
