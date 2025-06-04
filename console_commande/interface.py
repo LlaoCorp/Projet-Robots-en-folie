@@ -65,19 +65,19 @@ frame_btn.pack()
 
 # Liste des boutons avec leurs styles
 button_texts = [
-    ("Avancer", "TButton"),
-    ("Reculer", "TButton"),
-    ("Mode auto", "ModeAuto.TButton"),
-    ("Droite", "TButton"),
-    ("Gauche", "TButton")
+    ("Avancer", "TButton", "avancer"),
+    ("Reculer", "TButton", "reculer"),
+    ("Mode auto", "ModeAuto.TButton", "auto"),
+    ("Droite", "TButton", "droite"),
+    ("Gauche", "TButton", "gauche")
 ]
 
-for i, (text, style_name) in enumerate(button_texts):
-    btn = ttk.Button(frame_btn, text=text, style=style_name, command=lambda t=text: envoyer_commande(t))
+for i, (text, style_name, commande) in enumerate(button_texts):
+    btn = ttk.Button(frame_btn, text=text, style=style_name, command=lambda: envoyer_commande(commande, text_output))
     btn.grid(row=0, column=i, padx=20, pady=10, ipadx=10, ipady=5)
 
 
-btn = ttk.Button(frame_btn, text="Toggle pince", command=lambda: envoyer_commande("toggle_pince"))
+btn = ttk.Button(frame_btn, text="Toggle pince", command=lambda: envoyer_commande("toggle_pince", text_output))
 btn.grid(row=1, column=2, padx=20, pady=10, ipadx=10, ipady=5)
 
 # Frame pour les zones de texte
