@@ -1,11 +1,11 @@
 public class RobotVirtuel {
-    protected String uiid;
+    protected String uuid;
     protected int x,y;
     protected String etat;
     protected String objectif;
 
-    public RobotVirtuel(String uiid, int x, int y, String etat, String objectif) {
-        this.uiid = uiid;
+    public RobotVirtuel(String uuid, int x, int y, String etat, String objectif) {
+        this.uuid = uuid;
         this.x = x;
         this.y = y;
         this.etat = etat;

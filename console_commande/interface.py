@@ -1,7 +1,6 @@
 from tkinter import *
 from tkinter import ttk
-from functions import *
-
+from functions import envoyer_commande
 
 # Fenêtre plein écran mode immersif
 fenetre = Tk()
@@ -63,23 +62,6 @@ title.pack(pady=60)
 frame_btn = Frame(fenetre, bg="#f3f4f6")
 frame_btn.pack()
 
-# Liste des boutons avec leurs styles
-button_texts = [
-    ("Avancer", "TButton", "avancer"),
-    ("Reculer", "TButton", "reculer"),
-    ("Mode auto", "ModeAuto.TButton", "auto"),
-    ("Droite", "TButton", "droite"),
-    ("Gauche", "TButton", "gauche")
-]
-
-for i, (text, style_name, commande) in enumerate(button_texts):
-    btn = ttk.Button(frame_btn, text=text, style=style_name, command=lambda: envoyer_commande(commande, text_output))
-    btn.grid(row=0, column=i, padx=20, pady=10, ipadx=10, ipady=5)
-
-
-btn = ttk.Button(frame_btn, text="Toggle pince", command=lambda: envoyer_commande("toggle_pince", text_output))
-btn.grid(row=1, column=2, padx=20, pady=10, ipadx=10, ipady=5)
-
 # Frame pour les zones de texte
 text_frame = Frame(fenetre, bg="#f3f4f6")
 text_frame.pack(pady=30, fill="both", expand=True)
@@ -109,6 +91,23 @@ right_label = Label(right_box, text="Réponse du robot :", font=("Segoe UI", 12)
 right_label.pack(anchor="w", pady=(0, 5))
 text_output = Text(right_box, width=30, height=10, state="disabled")
 text_output.pack(fill="both", expand=True)
+
+# Liste des boutons avec leurs styles
+button_texts = [
+    ["Toggle Pince", "TButton", "toggle_pince"],
+    ["Avancer", "TButton", "avancer"],
+    ["Reculer", "TButton", "reculer"],
+    ["Droite", "TButton", "droite"],
+    ["Gauche", "TButton", "gauche"]
+]
+
+for i, (text, style_name, commande) in enumerate(button_texts):
+    btn = ttk.Button(frame_btn, text=text, style=style_name, command=lambda cmd=commande: envoyer_commande(cmd, text_output))
+    btn.grid(row=0, column=i, padx=20, pady=10, ipadx=10, ipady=5)
+
+
+btn = ttk.Button(frame_btn, text="Mode auto", style="ModeAuto.TButton", command=lambda: envoyer_commande("auto", text_output))
+btn.grid(row=1, column=2, padx=20, pady=10, ipadx=10, ipady=5)
 
 # Frame de bas de page pour placer le bouton quitter correctement
 bottom_frame = Frame(fenetre, bg="#f3f4f6")
