@@ -6,4 +6,3 @@ class Message(BaseModel):
 
 class REF(BaseModel):
     ref_id: str,
-    message: str
