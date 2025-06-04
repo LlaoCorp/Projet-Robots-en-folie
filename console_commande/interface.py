@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import ttk
 from functions import *
 
+
 # Fenêtre plein écran mode immersif
 fenetre = Tk()
 fenetre.title("Robots en folie")
