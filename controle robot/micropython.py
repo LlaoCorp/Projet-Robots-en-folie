@@ -1,6 +1,6 @@
 # import sys, json, network, urequests, bme280, time, hcsr04 
 import time, hcsr04 
-#from machine import Pin, I2C, ADC, deepsleep
+from machine import Pin, I2C, ADC, deepsleep
 
 ## Configuration de la connexion Wi-Fis
 ssid = 'IMERIR Fablab'
@@ -17,4 +17,4 @@ def distanceMesure():
 
 while True:
     print(distanceMesure())
-    time.sleep(0.5)
+    time.sleep(1)
