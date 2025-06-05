@@ -1,11 +1,6 @@
 # import sys, json, network, urequests, bme280, time, hcsr04 
 import time, hcsr04 
-from machine import Pin, I2C, ADC, deepsleep
-
-## Configuration de la connexion Wi-Fis
-ssid = 'IMERIR Fablab'
-password = 'imerir66'
-id = 'ed3029a5-ed9c-4599-bef0-fed1bf78badb'
+from machine import Pin, I2C, ADC, deepsleep'
 
 ## Mesure l'humidité du sol.
 #  @return Entier représentant l'humidité du sol.
