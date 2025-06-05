@@ -5,4 +5,4 @@ class Message(BaseModel):
     contenu: str
 
 class REF(BaseModel):
-    ref_id: str,
+    ref_id: str
