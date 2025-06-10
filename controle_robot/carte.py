@@ -13,7 +13,7 @@ class Carte:
         return self.pos
     
     def get_liste_zone(self):
-        return self.pos
+        return self.liste_zones
     
     def get_colors(self):
         return self.colors
