@@ -1,4 +1,21 @@
 from pydantic import BaseModel
+from datetime import datetime
+
+class EtatRobot(BaseModel):
+    ref_id: str
+    position: int
+    has_box: bool
+    objectif: str
+
+class ActionRobot(BaseModel):
+    ref_id: str
+    action: str
+    position: int
+
+class Initialisation(BaseModel):
+    ref_id: str
+    position: int
+    has_box: bool
 
 class Message(BaseModel):
     ref_id: str

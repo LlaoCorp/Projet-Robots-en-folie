@@ -7,7 +7,7 @@ from fastapi import APIRouter, Form
 from fastapi.responses import HTMLResponse
 from uuid import uuid4
 from database.service import *
-from database.base_model import Message
+from database.base_model import Message, EtatRobot, ActionRobot, Initialisation
 
 router = APIRouter()
 
@@ -53,3 +53,32 @@ async def envoyer_message(msg: Message):
 @router.get("/messages/")
 async def get_messages():
     return recuperer_messages()
+
+@router.post("/etat/")
+async def recevoir_etat(etat: EtatRobot):
+    enregistrer_etat_robot(etat)
+    return {"status": "etat reçu"}
+
+@router.get("/etats/{ref_id}")
+async def get_etat(ref_id: str):
+    etats = get_etats(ref_id)
+    if etats:
+        return {"ref_id": ref_id, "etats": etats}
+    return {"error": "Aucune mission trouvée pour ce robot."}
+
+@router.post("/action/")
+async def enregistrer_action(action: ActionRobot):
+    ajouter_action_en_base(action)
+    return {"status": "action enregistrée"}
+
+@router.get("/actions/{ref_id}")
+async def get_action(ref_id: str):
+    actions = get_actions(ref_id)
+    if actions:
+        return {"ref_id": ref_id, "actions": actions}
+    return {"error": "Aucune mission trouvée pour ce robot."}
+
+@router.post("/initialiser/")
+async def initialiser_robot(data: Initialisation):
+    enregistrer_robot(data)
+    return {"status": "robot initialisé"}
