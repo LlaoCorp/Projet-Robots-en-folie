@@ -6,7 +6,7 @@ mes_roues = roues.Roues(14,27,26,25)
 capteur_gauche = Pin(15, Pin.IN)
 capteur_droite = Pin(4, Pin.IN)
 servo = PWM(Pin(13), freq=50)
-carte = Carte()
+carte_terrain = carte.Carte()
 
 # Fonctions
 # ------------
@@ -25,12 +25,12 @@ def suivre_ligne():
         print("avance")
     elif capteur_gauche.value() == 0 and capteur_droite.value() != 0:
         mes_roues.droite()
-        time.sleep(0.5)
+        time.sleep(0.2)
         mes_roues.avancer()
         print("droite")
     else:
         mes_roues.droite()
-        time.sleep(0.5)
+        time.sleep(0.2)
         mes_roues.avancer()
         print("gauche")
 
