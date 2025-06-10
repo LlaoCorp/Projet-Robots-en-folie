@@ -2,7 +2,6 @@
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-        SimulateurJava.envoyerMessage("robot-simu-001", "test");
-        ClientAPI.recupererMessages();
+
     }
 }
