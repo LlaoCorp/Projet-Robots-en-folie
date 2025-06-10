@@ -1,44 +1,47 @@
-import netscape.javascript.JSObject;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class ClientAPI {
 
-    public JsonObject getMission(String uuid){
-        return null;
-    }
-
-    public void envoyerEtat(JSONObject message){
-
-    }
-
-    public JSONArray lireMessage(){
-        return null;
-    }
-
-    public static void recupererMessages() {
+    private void envoyer(String endpoint, String jsonPayload) {
         try {
-            URL url = new URL("http://localhost:8000/messages/");
+            URL url = new URL("http://localhost:8000" + endpoint);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json");
+            con.setDoOutput(true);
 
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(con.getInputStream()));
-            String inputLine;
-            StringBuilder contenu = new StringBuilder();
+            OutputStream os = con.getOutputStream();
+            byte[] input = jsonPayload.getBytes("utf-8");
+            os.write(input, 0, input.length);
+            os.close();
 
-            while ((inputLine = in.readLine()) != null) {
-                contenu.append(inputLine);
-            }
-            in.close();
-
-            System.out.println("Réponse du serveur : " + contenu.toString());
-
+            int responseCode = con.getResponseCode();
+            System.out.println("Requête vers " + endpoint + " - Code : " + responseCode);
+            con.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-}
 
+    public void envoyerEtat(String refId, int position, boolean hasBox, String objectif) {
+        JSONObject payload = new JSONObject();
+        payload.put("ref_id", refId);
+        payload.put("position", position);
+        payload.put("has_box", hasBox);
+        payload.put("objectif", objectif);
+        envoyer("/etat", payload.toString());
+    }
+
+    public void envoyerAction(String refId, String action, int position) {
+        JSONObject payload = new JSONObject();
+        payload.put("ref_id", refId);
+        payload.put("action", action);
+        payload.put("position", position);
+        envoyer("/action", payload.toString());
+    }
+}
