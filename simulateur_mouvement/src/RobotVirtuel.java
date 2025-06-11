@@ -1,10 +1,13 @@
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.swing.*;
+
 public class RobotVirtuel {
 
     private String refId = "REF-25-20-0506";
     private ClientAPI api = new ClientAPI();
+    private Mission mission = null;
     private Boolean hasBox = false;
     private int position = 0;
     private int[] zonesDepot = {3, 6};
@@ -56,12 +59,14 @@ public class RobotVirtuel {
         hasBox = true;
         api.envoyerAction(refId, "prend un cube", position);
         api.envoyerEtat(refId, position, hasBox, "Déposer un cube");
+        System.out.println("Cube récupéré en position " + position);
     }
 
     public void deposerCube() {
         hasBox = false;
         api.envoyerAction(refId, "dépose un cube", position);
         api.envoyerEtat(refId, position, hasBox, "Aucun objectif");
+        System.out.println("Cube déposé en position " + position);
     }
 
     public boolean hasBox() {
@@ -97,4 +102,25 @@ public class RobotVirtuel {
             Thread.sleep(600);
         }
     }
+
+    public void executerMission(ZonePanel panel) throws InterruptedException {
+        mission = api.recupererMission(refId);
+        if (mission == null || mission.getNumCube() == null) {
+            System.out.println("Aucune mission trouvée.");
+            return;
+        }
+
+        int cible = getPositionFromCube(mission.getNumCube());
+        mission.setStatut("current");
+        api.modifierStatusMission(refId, mission);
+        deplacerVers(cible, panel);
+        prendreCube();
+
+        int zoneDepot = getZoneDepotPlusProche();
+        deplacerVers(zoneDepot, panel);
+        deposerCube();
+        mission.setStatut("finish");
+        api.modifierStatusMission(refId, mission);
+    }
+
 }

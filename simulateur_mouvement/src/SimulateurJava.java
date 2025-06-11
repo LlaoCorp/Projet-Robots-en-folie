@@ -34,7 +34,8 @@ public class SimulateurJava extends JFrame {
         bouton.setFont(new Font("Arial", Font.BOLD, 16));
         bouton.addActionListener(e -> {
             String selectedCube = (String) cubeSelector.getSelectedItem();
-            this.robotAction(robot, selectedCube);
+            robot.getApi().envoyerMission(robot.getRefId(), selectedCube);
+            this.robotAction(robot);
         });
 
         JPanel topPanel = new JPanel(new FlowLayout());
@@ -45,7 +46,7 @@ public class SimulateurJava extends JFrame {
         add(topPanel, BorderLayout.NORTH);
     }
 
-    public void robotAction(RobotVirtuel robot, String selectedCube) {
+    public void robotActionTest(RobotVirtuel robot, String selectedCube) {
         int cible = robot.getPositionFromCube(selectedCube);
         robot.getApi().envoyerAction(robot.getRefId(), "démarre une mission", robot.getPosition());
         robot.getApi().envoyerEtat(robot.getRefId(), robot.getPosition(), robot.hasBox(), "Chercher un cube");
@@ -61,6 +62,16 @@ public class SimulateurJava extends JFrame {
                 robot.deposerCube();
                 JOptionPane.showMessageDialog(this, "Cube déposé en zone " + zoneDepot + " !");
 
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    public void robotAction(RobotVirtuel robot) {
+        new Thread(() -> {
+            try {
+                robot.executerMission(zonePanel);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
