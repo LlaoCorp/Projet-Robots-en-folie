@@ -13,21 +13,57 @@ def create_robot(name: str):
     conn.close()
     return robot_id
 
-def get_mission(ref_id: str):
+def enregistrer_mission(ref_id: str, num_cube: str, statut: str):
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT description FROM missions WHERE ref_id = ?", (ref_id,))
+    cursor.execute("SELECT COUNT(*) FROM ref WHERE id = ?", (ref_id,))
+    if cursor.fetchone()[0] == 0:
+        cursor.execute("INSERT INTO ref (id) VALUES (?)", (ref_id,))
+    cursor.execute("""
+        INSERT INTO missions (ref_id, num_cube, statut)
+        VALUES (?, ?, ?)
+    """, (ref_id, num_cube, statut))
+    conn.commit()
+    conn.close()
+
+def get_missions(ref_id: str):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id FROM missions WHERE ref_id = ? ORDER BY id DESC LIMIT 1", (ref_id,))
     missions = cursor.fetchall()
     conn.close()
-    return [{"ref_id": row[0], "description": row[1]} for row in missions]
+    return [{"id": row[0]} for row in missions]
 
-def list_missions():
+def get_current_mission(ref_id: str):
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT description FROM missions")
-    rows = cursor.fetchall()
+    cursor.execute("""
+        SELECT num_cube, statut
+        FROM missions
+        WHERE ref_id = ?
+        ORDER BY id DESC
+        LIMIT 1
+    """, (ref_id,))
+    row = cursor.fetchone()
+    print(row)
+    if row:
+        return {"ref_id": ref_id, "num_cube": row[0], "statut": row[1]}
+    return None
+
+def changer_statut_mission(ref_id: str, statut: str):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE missions
+        SET statut = ?
+        WHERE ref_id = ?
+        AND id = (SELECT id FROM missions WHERE ref_id = ? ORDER BY id DESC LIMIT 1)
+    """, (statut, ref_id, ref_id))
+    conn.commit()
+    updated = cursor.rowcount
     conn.close()
-    return [row[0] for row in rows]
+    return updated > 0
+
 
 def ajouter_message(ref_id, contenu):
     conn = get_db()
