@@ -3,11 +3,11 @@ import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import uvicorn
-from fastapi import APIRouter, Form
+from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse
 from uuid import uuid4
 from database.service import *
-from database.base_model import Message, EtatRobot, ActionRobot, Initialisation
+from database.base_model import Mission, Message, EtatRobot, ActionRobot, Initialisation
 
 router = APIRouter()
 
@@ -28,22 +28,22 @@ async def create(name: str = Form(...)):
     uuid = create_robot(name)
     return f"Robot '{name}' créé avec UUID : {uuid}<br><a href='/'>Retour</a>"
 
-@router.get("/mission/{ref_id}")
-async def get_mission(ref_id: str):
-    missions = get_mission(ref_id)
-    if missions:
-        return {"ref_id": ref_id, "missions": missions}
-    return {"error": "Aucune mission trouvée pour ce robot."}
+# @router.get("/mission/{ref_id}")
+# async def get_mission(ref_id: str):
+#     missions = get_mission(ref_id)
+#     if missions:
+#         return {"ref_id": ref_id, "missions": missions}
+#     return {"error": "Aucune mission trouvée pour ce robot."}
 
 
-@router.get("/missions", response_class=HTMLResponse)
-async def missions():
-    mission_data = list_missions()
-    html = "<h3>Missions</h3><ul>"
-    for m in mission_data:
-        html += f"<li>{m}</li>"
-    html += "</ul><a href='/'>Retour</a>"
-    return html
+# @router.get("/missions", response_class=HTMLResponse)
+# async def missions():
+#     mission_data = list_missions()
+#     html = "<h3>Missions</h3><ul>"
+#     for m in mission_data:
+#         html += f"<li>{m}</li>"
+#     html += "</ul><a href='/'>Retour</a>"
+#     return html
 
 @router.post("/envoyer/")
 async def envoyer_message(msg: Message):
@@ -53,6 +53,34 @@ async def envoyer_message(msg: Message):
 @router.get("/messages/")
 async def get_messages():
     return recuperer_messages()
+
+@router.get("/missions/{ref_id}")
+async def list_missions(ref_id: str):
+    missions = get_missions(ref_id)
+    if missions:
+        return {"ref_id": ref_id, "missions": missions}
+    return {"error": "Aucune mission trouvée pour ce robot."}
+
+@router.post("/mission/")
+async def recevoir_mission(mission: Mission):
+    enregistrer_mission(mission.ref_id, mission.num_cube, mission.statut)
+    return {"status": "mission enregistrée"}
+
+@router.get("/mission/{ref_id}")
+async def recuperer_mission(ref_id: str):
+    mission = get_current_mission(ref_id)
+    if mission:
+        return mission
+    return {"error": "Aucune mission en cours pour ce robot."}
+
+@router.post("/mission/change_statut/{ref_id}")
+async def changer_statut_mission_route(ref_id: str, request: Request):
+    payload = await request.json()
+    statut = payload.get("statut")
+    if not statut:
+        return {"error": "Champ 'statut' manquant"}
+    success = changer_statut_mission(ref_id, statut)
+    return {"status": "ok" if success else "erreur", "statut": statut}
 
 @router.post("/etat/")
 async def recevoir_etat(etat: EtatRobot):

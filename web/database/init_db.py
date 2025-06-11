@@ -41,5 +41,17 @@ def init_db():
         FOREIGN KEY (ref_id) REFERENCES ref(id)
     );
     """)
+
+    curseur.execute("""
+    CREATE TABLE IF NOT EXISTS missions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ref_id TEXT NOT NULL,
+        num_cube TEXT NOT NULL,
+        statut TEXT NOT NULL,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (ref_id) REFERENCES ref(id)
+    );
+    """)
+
     conn.commit()
     conn.close()
