@@ -13,7 +13,7 @@ def request():
             }
         json_str = json.dumps(data)
         print(json_str)
-        res = urequests.post(url='http://10.7.5.148:8000/envoyer', json=json_str, headers={'content-type': 'application/json'})
+        res = urequests.post(url='http://10.7.5.148:8000/envoyer', json=data, headers={'content-type': 'application/json'})
         return res
     except Exception as exc:
         print("erreur",exc)
