@@ -43,13 +43,37 @@ def init_db():
     """)
 
     curseur.execute("""
-    CREATE TABLE IF NOT EXISTS missions (
+    CREATE TABLE IF NOT EXISTS instructions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        ref_id TEXT NOT NULL,
-        num_cube TEXT NOT NULL,
+        robot_id TEXT NOT NULL,
+        blocks LIST NOT NULL,
         statut TEXT NOT NULL,
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (ref_id) REFERENCES ref(id)
+        FOREIGN KEY (robot_id) REFERENCES ref(id)
+    );
+    """)
+
+    curseur.execute("""
+    CREATE TABLE IF NOT EXISTS telemetry (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        robot_id TEXT NOT NULL,
+        vitesse_instant REAL,
+        ds_ultrasons REAL,
+        status_deplacement TEXT,
+        ligne INTEGER,
+        status_pince INTEGER CHECK (status_pince IN (0, 1)),
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (robot_id) REFERENCES ref(id)
+    );
+    """)
+
+    curseur.execute("""
+    CREATE TABLE IF NOT EXISTS summary (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        robot_id TEXT NOT NULL,
+        vitesse_moy REAL,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (robot_id) REFERENCES ref(id)
     );
     """)
 

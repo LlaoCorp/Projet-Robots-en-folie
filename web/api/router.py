@@ -7,7 +7,7 @@ from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse
 from uuid import uuid4
 from database.service import *
-from database.base_model import Mission, Message, EtatRobot, ActionRobot, Initialisation
+from database.base_model import Instruction, Message, EtatRobot, ActionRobot, Initialisation, Telemetry, Summary
 
 router = APIRouter()
 
@@ -28,29 +28,13 @@ async def create(name: str = Form(...)):
     uuid = create_robot(name)
     return f"Robot '{name}' créé avec UUID : {uuid}<br><a href='/'>Retour</a>"
 
-# @router.get("/mission/{ref_id}")
-# async def get_mission(ref_id: str):
-#     missions = get_mission(ref_id)
-#     if missions:
-#         return {"ref_id": ref_id, "missions": missions}
-#     return {"error": "Aucune mission trouvée pour ce robot."}
-
-
-# @router.get("/missions", response_class=HTMLResponse)
-# async def missions():
-#     mission_data = list_missions()
-#     html = "<h3>Missions</h3><ul>"
-#     for m in mission_data:
-#         html += f"<li>{m}</li>"
-#     html += "</ul><a href='/'>Retour</a>"
-#     return html
-
-@router.post("/envoyer/")
+@router.post("/envoyer")
 async def envoyer_message(msg: Message):
+    print(f"📩 Message reçu de {msg.ref_id} : {msg.contenu}")
     ajouter_message(msg.ref_id, msg.contenu)
     return {"status": "ok", "message": msg.contenu}
 
-@router.get("/messages/")
+@router.get("/messages")
 async def get_messages():
     return recuperer_messages()
 
@@ -61,28 +45,7 @@ async def list_missions(ref_id: str):
         return {"ref_id": ref_id, "missions": missions}
     return {"error": "Aucune mission trouvée pour ce robot."}
 
-@router.post("/mission/")
-async def recevoir_mission(mission: Mission):
-    enregistrer_mission(mission.ref_id, mission.num_cube, mission.statut)
-    return {"status": "mission enregistrée"}
-
-@router.get("/mission/{ref_id}")
-async def recuperer_mission(ref_id: str):
-    mission = get_current_mission(ref_id)
-    if mission:
-        return mission
-    return {"error": "Aucune mission en cours pour ce robot."}
-
-@router.post("/mission/change_statut/{ref_id}")
-async def changer_statut_mission_route(ref_id: str, request: Request):
-    payload = await request.json()
-    statut = payload.get("statut")
-    if not statut:
-        return {"error": "Champ 'statut' manquant"}
-    success = changer_statut_mission(ref_id, statut)
-    return {"status": "ok" if success else "erreur", "statut": statut}
-
-@router.post("/etat/")
+@router.post("/etat")
 async def recevoir_etat(etat: EtatRobot):
     enregistrer_etat_robot(etat)
     return {"status": "etat reçu"}
@@ -94,7 +57,7 @@ async def get_etat(ref_id: str):
         return {"ref_id": ref_id, "etats": etats}
     return {"error": "Aucune mission trouvée pour ce robot."}
 
-@router.post("/action/")
+@router.post("/action")
 async def enregistrer_action(action: ActionRobot):
     ajouter_action_en_base(action)
     return {"status": "action enregistrée"}
@@ -106,7 +69,44 @@ async def get_action(ref_id: str):
         return {"ref_id": ref_id, "actions": actions}
     return {"error": "Aucune mission trouvée pour ce robot."}
 
-@router.post("/initialiser/")
+@router.post("/initialiser")
 async def initialiser_robot(data: Initialisation):
     enregistrer_robot(data)
     return {"status": "robot initialisé"}
+
+@router.post("/telemetry")
+async def telemetry(telemetry: Telemetry):
+    enregistrer_telemetry(telemetry)
+    return {"status": "télémetrie reçue"}
+
+@router.post("/summary")
+async def summary(summary: Summary):
+    enregistrer_summary(summary)
+    return {"status": "résumé reçu"}
+
+@router.post("/instructions")
+async def recevoir_instruction(instruction: Instruction):
+    enregistrer_instruction(instruction.robot_id, instruction.blocks, instruction.statut)
+    return {"status": "instruction enregistrée"}
+
+@router.get("/instructions/{robot_id}")
+async def recuperer_instruction(robot_id: str):
+    instruction = get_current_instruction(robot_id)
+    if instruction:
+        return instruction
+    return {"error": "Aucune instruction en cours pour ce robot."}
+
+@router.post("/instructions/change_statut/{robot_id}")
+async def changer_statut_instruction_route(robot_id: str, request: Request):
+    payload = await request.json()
+    statut = payload.get("statut")
+    if not statut:
+        return {"error": "Champ 'statut' manquant"}
+    success = changer_statut_instruction(robot_id, statut)
+    return {"status": "ok" if success else "erreur", "statut": statut}
+
+@router.post("/summary")
+async def summary(data: Initialisation):
+    enregistrer_robot(data)
+    return {"status": "résumé reçu"}
+

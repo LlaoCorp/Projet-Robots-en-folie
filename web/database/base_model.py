@@ -26,3 +26,21 @@ class Message(BaseModel):
 
 class REF(BaseModel):
     ref_id: str
+
+class Telemetry(BaseModel):
+    robot_id: str = None
+    vitesse_instant: float = None
+    ds_ultrasons: float = None
+    status_deplacement: str = None
+    ligne: int = None
+    status_pince: bool = None
+
+class Summary(BaseModel):
+    robot_id: str = None
+    vitesse_moy: float = None
+
+class Instruction(BaseModel):
+    robot_id: str
+    blocks: list[int]
+    statut: str
+
