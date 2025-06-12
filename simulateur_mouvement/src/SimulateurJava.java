@@ -63,28 +63,6 @@ public class SimulateurJava extends JFrame {
 
     }
 
-    public void robotActionTest(RobotVirtuel robot, String selectedCube) {
-        int cible = robot.getPositionFromCube(selectedCube);
-//        robot.getApi().envoyerAction(robot.getRefId(), "démarre une mission", robot.getPosition());
-//        robot.getApi().envoyerEtat(robot.getRefId(), robot.getPosition(), robot.hasBox(), "Chercher un cube");
-
-        new Thread(() -> {
-            try {
-                robot.deplacerVers(cible, zonePanel);
-                JOptionPane.showMessageDialog(this, "Cube atteint en position " + cible + " !");
-                robot.prendreCube();
-
-                int zoneDepot = robot.getZoneDepotPlusProche();
-                robot.deplacerVers(zoneDepot, zonePanel);
-                robot.deposerCube();
-                JOptionPane.showMessageDialog(this, "Cube déposé en zone " + zoneDepot + " !");
-
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
-
     public void robotAction(RobotVirtuel robot) {
         new Thread(() -> {
             try {
