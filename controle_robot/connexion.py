@@ -4,20 +4,20 @@ import sys, json, network, time, urequests
 ssid = 'IMERIR Fablab'
 password = 'imerir66'
 
-#  @return Réponse du serveur à la requête POST.
-async def request():
-    try:
-        data = {
-                "ref_id": "robotTest",
-                "contenu": "test"
-            }
-        json_str = json.dumps(data)
-        print(json_str)
-        res = urequests.post(url='http://10.7.5.148:8000/envoyer/', json=json_str, headers={'content-type': 'application/json'})
-        return res
-    except Exception as exc:
-        print("erreur",exc)
-    time.sleep(2)
+# #  @return Réponse du serveur à la requête POST.
+# async def request():
+#     try:
+#         data = {
+#                 "ref_id": "robotTest",
+#                 "contenu": "test"
+#             }
+#         json_str = json.dumps(data)
+#         print(json_str)
+#         res = urequests.post(url='http://10.7.5.148:8000/envoyer/', json=json_str, headers={'content-type': 'application/json'})
+#         return res
+#     except Exception as exc:
+#         print("erreur",exc)
+#     time.sleep(2)
 
 def init_connexion():
     wlan = network.WLAN(network.STA_IF)
