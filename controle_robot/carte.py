@@ -2,6 +2,7 @@ class Carte:
     def __init__(self, position_actuel='base'):
         self.liste_zones = ['base', 'c0', 'c1', 'e0', 's0' 'c2', 'c3', 'e1', 's1', 'c4']
         self.pos = position_actuel
+        self.reversed = False
 
         self.colors = { 'c0': 'jaune',
                         'c1': 'rouge',
@@ -9,8 +10,11 @@ class Carte:
                         'c3': 'bleu',
                         'c4': 'vert' }
     
-    def get_pos_actuel(self):
+    def get_pos(self):
         return self.pos
+
+    def get_reversed(self):
+        return self.reversed
     
     def get_liste_zone(self):
         return self.liste_zones
@@ -20,7 +24,7 @@ class Carte:
 
     def get_best_container(self):
         if self.pos[0] == 'c':
-            pos_int = self.liste_zones.index(self.pos[0])
+            pos_int = self.liste_zones.index(self.pos)
             if self.liste_zones[pos_int - 1][0] == 's':
                 # Si la première lettre de l'élément précendent l'élément actuel est égale à s (sortie)
                 # alors, prendre cette sortie
@@ -34,7 +38,23 @@ class Carte:
         else :
             return 'already'
     
-    def set_pos_actuel(self, pos):
-        self.pos = pos
-            
+    def set_pos_actuel(self, _pos):
+        self.pos = _pos
+    
+    def set_reversed(self, _reversed):
+        self.reversed = _reversed
+    
+    def increase_pos(self):
+        pos_int = self.liste_zones.index(self.pos)
+        if pos_int == len(liste_zones):
+            self.pos = self.liste_zones[0]
+        else:
+            self.pos = self.liste_zones[pos_int + 1]
+    
+    def decrease_pos(self):
+        pos_int = self.liste_zones.index(self.pos)
+        if pos_int == 0:
+            self.pos = self.liste_zones[len(liste_zones) - 1]
+        else:
+            self.pos = self.liste_zones[pos_int - 1]
 

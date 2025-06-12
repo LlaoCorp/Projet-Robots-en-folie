@@ -35,26 +35,21 @@ class Roues:
             self.IN4.value(0)
 
     def avancer(self):
-        print("Avancer")
         self.moteur_a(1)  # Valeur PWM entre 0 et 1023
         self.moteur_b(1)
     
     def reculer(self):
-        print("Reculer")
         self.moteur_a(-1)
         self.moteur_b(-1)
     
     def stop(self):
-        print("Stop")
         self.moteur_a(0)
         self.moteur_b(0)
     
     def droite(self):
-        print("Droite")
         self.moteur_a(0)  # Valeur PWM entre 0 et 1023
         self.moteur_b(1)
 
     def gauche(self):
-        print("Gauche")
         self.moteur_a(1)  # Valeur PWM entre 0 et 1023
         self.moteur_b(0)
