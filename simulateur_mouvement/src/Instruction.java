@@ -1,9 +1,11 @@
-public class Mission {
+import java.util.ArrayList;
+
+public class Instruction {
     private String refId;
-    private String numCube;
+    private ArrayList<Integer> numCube;
     private String statut;
 
-    public Mission(String refId, String numCube, String statut) {
+    public Instruction(String refId, ArrayList<Integer> numCube, String statut) {
         this.refId = refId;
         this.numCube = numCube;
         this.statut = statut;
@@ -13,7 +15,7 @@ public class Mission {
         return refId;
     }
 
-    public String getNumCube() {
+    public ArrayList<Integer> getNumCube() {
         return numCube;
     }
 

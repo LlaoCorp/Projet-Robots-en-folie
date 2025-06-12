@@ -13,57 +13,67 @@ def create_robot(name: str):
     conn.close()
     return robot_id
 
-def enregistrer_mission(ref_id: str, num_cube: str, statut: str):
+def enregistrer_instruction(robot_id: str, blocks: list, statut: str):
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT COUNT(*) FROM ref WHERE id = ?", (ref_id,))
+    cursor.execute("SELECT COUNT(*) FROM ref WHERE id = ?", (robot_id,))
     if cursor.fetchone()[0] == 0:
-        cursor.execute("INSERT INTO ref (id) VALUES (?)", (ref_id,))
+        cursor.execute("INSERT INTO ref (id) VALUES (?)", (robot_id,))
     cursor.execute("""
-        INSERT INTO missions (ref_id, num_cube, statut)
+        INSERT INTO instructions (robot_id, blocks, statut)
         VALUES (?, ?, ?)
-    """, (ref_id, num_cube, statut))
+    """, (robot_id, str(blocks), statut))
     conn.commit()
     conn.close()
 
-def get_missions(ref_id: str):
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT id FROM missions WHERE ref_id = ? ORDER BY id DESC LIMIT 1", (ref_id,))
-    missions = cursor.fetchall()
-    conn.close()
-    return [{"id": row[0]} for row in missions]
-
-def get_current_mission(ref_id: str):
+def get_current_instruction(robot_id: str):
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT num_cube, statut
-        FROM missions
-        WHERE ref_id = ?
+        SELECT blocks, statut
+        FROM instructions
+        WHERE robot_id = ? AND statut = 'new'
         ORDER BY id DESC
         LIMIT 1
-    """, (ref_id,))
+    """, (robot_id,))
     row = cursor.fetchone()
-    print(row)
     if row:
-        return {"ref_id": ref_id, "num_cube": row[0], "statut": row[1]}
+        return {"robot_id": robot_id, "blocks": row[0], "statut": row[1]}
     return None
 
-def changer_statut_mission(ref_id: str, statut: str):
+def changer_statut_instruction(robot_id: str, statut: str):
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("""
-        UPDATE missions
+        UPDATE instructions
         SET statut = ?
-        WHERE ref_id = ?
-        AND id = (SELECT id FROM missions WHERE ref_id = ? ORDER BY id DESC LIMIT 1)
-    """, (statut, ref_id, ref_id))
+        WHERE robot_id = ?
+        AND id = (SELECT id FROM instructions WHERE robot_id = ? ORDER BY id DESC LIMIT 1)
+    """, (statut, robot_id, robot_id))
     conn.commit()
     updated = cursor.rowcount
     conn.close()
     return updated > 0
 
+def enregistrer_telemetry(telemetry):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO telemetry (robot_id, vitesse_instant, ds_ultrasons, status_deplacement, ligne, status_pince)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (telemetry.robot_id, telemetry.vitesse_instant, telemetry.ds_ultrasons, telemetry.status_deplacement, telemetry.ligne, int(telemetry.status_pince)))
+    conn.commit()
+    conn.close()
+
+def enregistrer_summary(summary):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO summary (robot_id, vitesse_moy)
+        VALUES (?, ?)
+    """, (summary.robot_id, summary.vitesse_moy))
+    conn.commit()
+    conn.close()
 
 def ajouter_message(ref_id, contenu):
     conn = get_db()
