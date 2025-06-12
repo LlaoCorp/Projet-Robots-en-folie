@@ -4,6 +4,8 @@ import org.json.JSONObject;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientAPI {
 
@@ -28,35 +30,34 @@ public class ClientAPI {
         }
     }
 
-    public void envoyerEtat(String refId, int position, boolean hasBox, String objectif) {
-        JSONObject payload = new JSONObject();
-        payload.put("ref_id", refId);
-        payload.put("position", position);
-        payload.put("has_box", hasBox);
-        payload.put("objectif", objectif);
-        envoyer("/etat", payload.toString());
-    }
+//    public void envoyerEtat(String refId, int position, boolean hasBox, String objectif) {
+//        JSONObject payload = new JSONObject();
+//        payload.put("ref_id", refId);
+//        payload.put("position", position);
+//        payload.put("has_box", hasBox);
+//        payload.put("objectif", objectif);
+//        envoyer("/etat", payload.toString());
+//    }
 
-    public void envoyerAction(String refId, String action, int position) {
-        JSONObject payload = new JSONObject();
-        payload.put("ref_id", refId);
-        payload.put("action", action);
-        payload.put("position", position);
-        envoyer("/action", payload.toString());
-    }
+//    public void envoyerAction(String refId, String action, int position) {
+//        JSONObject payload = new JSONObject();
+//        payload.put("ref_id", refId);
+//        payload.put("action", action);
+//        payload.put("position", position);
+//        envoyer("/action", payload.toString());
+//    }
 
-    public void envoyerMission(String refId, String numCube) {
+    public void envoyerInstruction(String refId, ArrayList<Integer> blocks) {
         JSONObject payload = new JSONObject();
-        payload.put("ref_id", refId);
-        payload.put("num_cube", numCube);
+        payload.put("robot_id", refId);
+        payload.put("blocks", blocks);
         payload.put("statut", "new");
-
-        envoyer("/mission", payload.toString());
+        envoyer("/instructions", payload.toString());
     }
 
-    public Mission recupererMission(String refId) {
+    public Instruction recupererInstruction(String refId) {
         try {
-            URL url = new URL("http://localhost:8000/mission/" + refId);
+            URL url = new URL("http://localhost:8000/instructions/" + refId);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             con.setRequestProperty("Accept", "application/json");
@@ -72,12 +73,18 @@ public class ClientAPI {
                 in.close();
 
                 JSONObject json = new JSONObject(content.toString());
-                String numCube = json.getString("num_cube");
+                JSONArray blocksArray = new JSONArray(json.getString("blocks"));
                 String statut = json.getString("statut");
 
-                return new Mission(refId, numCube, statut);
+                ArrayList<Integer> cubes = new ArrayList<>();
+                for (int i = 0; i < blocksArray.length(); i++) {
+                    cubes.add(blocksArray.getInt(i));
+                }
+
+                modifierStatusInstruction(refId, "current");
+                return new Instruction(refId, cubes, statut);
             } else {
-                System.out.println("Aucune mission récupérée (code " + responseCode + ")");
+                System.out.println("Erreur récupération instruction (code " + responseCode + ")");
                 return null;
             }
         } catch (Exception e) {
@@ -86,11 +93,28 @@ public class ClientAPI {
         }
     }
 
-    public void modifierStatusMission(String refId, Mission mission){
+    public void modifierStatusInstruction(String refId, String statut) {
         JSONObject payload = new JSONObject();
-        payload.put("ref_id", refId);
-        payload.put("statut", mission.getStatut());
+        payload.put("robot_id", refId);
+        payload.put("statut", statut);
         envoyer("/mission/change_statut/"+refId, payload.toString());
     }
 
+    public void envoyerTelemetry(String refId, float vitesse_instant, float ds_ultrasons, String status_deplacement, Integer ligne, boolean status_pince){
+        JSONObject payload = new JSONObject();
+        payload.put("robot_id", refId);
+        payload.put("vitesse_instant", vitesse_instant);
+        payload.put("ds_ultrasons", ds_ultrasons);
+        payload.put("status_deplacement", status_deplacement);
+        payload.put("ligne", ligne);
+        payload.put("status_pince", status_pince);
+        envoyer("/telemetry", payload.toString());
+    }
+
+    public void envoyerSummary(String refId, float viesse_moy){
+        JSONObject payload = new JSONObject();
+        payload.put("robot_id", refId);
+        payload.put("viesse_moy", viesse_moy);
+        envoyer("/summary", payload.toString());
+    }
 }

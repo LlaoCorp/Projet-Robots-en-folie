@@ -1,9 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class SimulateurJava extends JFrame {
 
     private JComboBox<String> cubeSelector;
+    private JTextArea logArea;
     private ZonePanel zonePanel;
     private RobotVirtuel robot;
 
@@ -18,6 +20,8 @@ public class SimulateurJava extends JFrame {
         robot = new RobotVirtuel();
         zonePanel = new ZonePanel();
 
+        robot.setSimulateur(this);
+
         setTitle("Simulateur REF");
         setSize(600, 450);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -26,15 +30,17 @@ public class SimulateurJava extends JFrame {
 
         add(zonePanel, BorderLayout.CENTER);
 
-        String[] cubes = {"Cube 1", "Cube 2", "Cube 3", "Cube 4", "Cube 5"};
-        cubeSelector = new JComboBox<>(cubes);
+        Integer[] cubes = {1, 2, 3, 4, 5};
+        JComboBox<Integer> cubeSelector = new JComboBox<>(cubes);
         cubeSelector.setFont(new Font("Arial", Font.PLAIN, 14));
 
         JButton bouton = new JButton("Aller chercher un cube");
         bouton.setFont(new Font("Arial", Font.BOLD, 16));
         bouton.addActionListener(e -> {
-            String selectedCube = (String) cubeSelector.getSelectedItem();
-            robot.getApi().envoyerMission(robot.getRefId(), selectedCube);
+            Integer selectedCube = (Integer) cubeSelector.getSelectedItem();
+            ArrayList<Integer> blocks = new ArrayList<>();
+            blocks.add(selectedCube);
+            robot.getApi().envoyerInstruction(robot.getRefId(), blocks);
             this.robotAction(robot);
         });
 
@@ -44,12 +50,23 @@ public class SimulateurJava extends JFrame {
         topPanel.add(bouton);
 
         add(topPanel, BorderLayout.NORTH);
+
+        logArea = new JTextArea(15, 20);
+        logArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(logArea);
+
+        JPanel rightPanel = new JPanel(new BorderLayout());
+        rightPanel.setBorder(BorderFactory.createTitledBorder("Instructions du robot"));
+        rightPanel.add(scrollPane, BorderLayout.CENTER);
+
+        add(rightPanel, BorderLayout.EAST);
+
     }
 
     public void robotActionTest(RobotVirtuel robot, String selectedCube) {
         int cible = robot.getPositionFromCube(selectedCube);
-        robot.getApi().envoyerAction(robot.getRefId(), "démarre une mission", robot.getPosition());
-        robot.getApi().envoyerEtat(robot.getRefId(), robot.getPosition(), robot.hasBox(), "Chercher un cube");
+//        robot.getApi().envoyerAction(robot.getRefId(), "démarre une mission", robot.getPosition());
+//        robot.getApi().envoyerEtat(robot.getRefId(), robot.getPosition(), robot.hasBox(), "Chercher un cube");
 
         new Thread(() -> {
             try {
@@ -71,10 +88,17 @@ public class SimulateurJava extends JFrame {
     public void robotAction(RobotVirtuel robot) {
         new Thread(() -> {
             try {
-                robot.executerMission(zonePanel);
+                robot.executerInstruction(zonePanel);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    public void ajouterInstruction(String texte) {
+        SwingUtilities.invokeLater(() -> {
+            logArea.append(texte + "\n");
+            logArea.setCaretPosition(logArea.getDocument().getLength());
+        });
     }
 }

@@ -7,21 +7,32 @@ public class RobotVirtuel {
 
     private String refId = "REF-25-20-0506";
     private ClientAPI api = new ClientAPI();
-    private Mission mission = null;
+    private Instruction instruction = null;
     private Boolean hasBox = false;
     private int position = 0;
     private int[] zonesDepot = {3, 6};
+    private SimulateurJava simulateur;
 
     public void avancer(int positionCible) {
+        log("Avance vers position " + position);
         if (position < positionCible) {
             position++;
-            api.envoyerAction(refId, "avance", position);
+//            api.envoyerAction(refId, "avance", position);
         } else if (position > positionCible) {
             position--;
-            api.envoyerAction(refId, "recule", position);
+//            api.envoyerAction(refId, "recule", position);
         }
+
+        float vitesse = 1.0f;
+        float distanceUltrasons = 20.0f;
+        String statusDeplacement = "moving";
+        int ligne = position;
+        boolean pinceActive = hasBox;
+
+        api.envoyerTelemetry(refId, vitesse, distanceUltrasons, statusDeplacement, ligne, pinceActive);
+
         String objectif = hasBox ? "Déposer un cube" : "Chercher un cube";
-        api.envoyerEtat(refId, position, hasBox, objectif);
+//        api.envoyerEtat(refId, position, hasBox, objectif);
     }
 
     public int getPosition() {
@@ -45,27 +56,30 @@ public class RobotVirtuel {
         }
     }
 
-    public void setHasBox(boolean hasBox) {
-        this.hasBox = hasBox;
-        if (hasBox) {
-            api.envoyerEtat(refId, position, hasBox,"Cube récupéré en position " + position);
-            api.envoyerEtat(refId, position, hasBox, "Robot a désormais un cube");
-        }else{
-            api.envoyerEtat(refId, position, hasBox, "Cube déposé en zone " + position);
-        }
-    }
+//    public void setHasBox(boolean hasBox) {
+//        this.hasBox = hasBox;
+//        if (hasBox) {
+//            api.envoyerEtat(refId, position, hasBox,"Cube récupéré en position " + position);
+//            api.envoyerEtat(refId, position, hasBox, "Robot a désormais un cube");
+//        }else{
+//            api.envoyerEtat(refId, position, hasBox, "Cube déposé en zone " + position);
+//        }
+//    }
 
     public void prendreCube() {
         hasBox = true;
-        api.envoyerAction(refId, "prend un cube", position);
-        api.envoyerEtat(refId, position, hasBox, "Déposer un cube");
+        log("Cube récupéré !");
+//        api.envoyerAction(refId, "prend un cube", position);
+//        api.envoyerEtat(refId, position, hasBox, "Déposer un cube");
         System.out.println("Cube récupéré en position " + position);
     }
 
     public void deposerCube() {
         hasBox = false;
-        api.envoyerAction(refId, "dépose un cube", position);
-        api.envoyerEtat(refId, position, hasBox, "Aucun objectif");
+        log("Dépose cube en zone " + position);
+//        api.envoyerAction(refId, "dépose un cube", position);
+//        api.envoyerEtat(refId, position, hasBox, "Aucun objectif");
+        api.envoyerSummary(refId, 1.0f);
         System.out.println("Cube déposé en position " + position);
     }
 
@@ -103,24 +117,31 @@ public class RobotVirtuel {
         }
     }
 
-    public void executerMission(ZonePanel panel) throws InterruptedException {
-        mission = api.recupererMission(refId);
-        if (mission == null || mission.getNumCube() == null) {
-            System.out.println("Aucune mission trouvée.");
+    public void executerInstruction(ZonePanel panel) throws InterruptedException {
+        instruction = api.recupererInstruction(refId);
+        if (instruction == null || instruction.getNumCube() == null || instruction.getNumCube().isEmpty()) {
+            System.out.println("Aucune instruction trouvée.");
             return;
         }
 
-        int cible = getPositionFromCube(mission.getNumCube());
-        mission.setStatut("current");
-        api.modifierStatusMission(refId, mission);
+        int numeroCube = instruction.getNumCube().get(0);
+        String nomCube = "Cube " + numeroCube;
+        int cible = getPositionFromCube(nomCube);
+
         deplacerVers(cible, panel);
         prendreCube();
 
         int zoneDepot = getZoneDepotPlusProche();
         deplacerVers(zoneDepot, panel);
         deposerCube();
-        mission.setStatut("finish");
-        api.modifierStatusMission(refId, mission);
     }
 
+
+    public void setSimulateur(SimulateurJava simulateur) {
+        this.simulateur = simulateur;
+    }
+
+    private void log(String message) {
+        if (simulateur != null) simulateur.ajouterInstruction(message);
+    }
 }

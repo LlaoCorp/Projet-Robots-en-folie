@@ -3,8 +3,8 @@ import java.awt.*;
 
 class ZonePanel extends JPanel {
     private static final int NB_ZONES = 8;
-    private static final int RAYON_ZONE = 60;
-    private static final int MARGE = 40;
+    private static final int RAYON_ZONE = 50;
+    private static final int MARGE = 30;
 
     private int positionRobot = 0;
 
