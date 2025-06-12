@@ -46,7 +46,7 @@ class Carte:
     
     def increase_pos(self):
         pos_int = self.liste_zones.index(self.pos)
-        if pos_int == len(liste_zones):
+        if pos_int >= len(self.liste_zones):
             self.pos = self.liste_zones[0]
         else:
             self.pos = self.liste_zones[pos_int + 1]
@@ -54,7 +54,7 @@ class Carte:
     def decrease_pos(self):
         pos_int = self.liste_zones.index(self.pos)
         if pos_int == 0:
-            self.pos = self.liste_zones[len(liste_zones) - 1]
+            self.pos = self.liste_zones[len(self.liste_zones) - 1]
         else:
             self.pos = self.liste_zones[pos_int - 1]
 

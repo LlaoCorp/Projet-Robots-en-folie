@@ -47,9 +47,9 @@ class Roues:
         self.moteur_b(0)
     
     def droite(self):
-        self.moteur_a(0)  # Valeur PWM entre 0 et 1023
-        self.moteur_b(1)
+        self.moteur_a(1)
+        self.moteur_b(0)
 
     def gauche(self):
-        self.moteur_a(1)  # Valeur PWM entre 0 et 1023
-        self.moteur_b(0)
+        self.moteur_a(0)
+        self.moteur_b(1)
