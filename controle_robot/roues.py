@@ -11,7 +11,7 @@ class Roues:
         self.IN3 = Pin(PIN3, Pin.OUT)
         self.IN4 = Pin(PIN4, Pin.OUT)
     
-    # Fonction pour contrôler un moteur
+    # Fonction pour contrôler le moteur droit
     def moteur_a(self, vitesse):
         if vitesse < 0:
             self.IN1.value(1)
@@ -23,6 +23,7 @@ class Roues:
             self.IN1.value(0)
             self.IN2.value(0)
 
+    # Fonction pour contrôler le moteur gauche
     def moteur_b(self, vitesse):
         if vitesse < 0:
             self.IN3.value(1)
@@ -47,9 +48,9 @@ class Roues:
         self.moteur_b(0)
     
     def droite(self):
-        self.moteur_a(1)
-        self.moteur_b(0)
-
-    def gauche(self):
         self.moteur_a(0)
         self.moteur_b(1)
+
+    def gauche(self):
+        self.moteur_a(1)
+        self.moteur_b(0)

@@ -169,3 +169,7 @@ def test_servo2():
     time.sleep(3)
     #wait
     time.sleep(5)
+
+def test_pwm():
+    in1 = PWM(Pin(26), freq=500, duty=500)
+    in2 = PWM(Pin(27), freq=500, duty=500)
