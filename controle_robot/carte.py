@@ -1,8 +1,9 @@
 class Carte:
-    def __init__(self, position_actuel='base'):
+    def __init__(self, objectif='c3', position_actuel='base'):
         self.liste_zones = ['base', 'c0', 'c1', 'e0', 's0' 'c2', 'c3', 'e1', 's1', 'c4']
         self.pos = position_actuel
         self.reversed = False
+        self.objectif = objectif
 
         self.colors = { 'c0': 'jaune',
                         'c1': 'rouge',
@@ -15,6 +16,9 @@ class Carte:
 
     def get_reversed(self):
         return self.reversed
+    
+    def get_objectif(self):
+        return self.objectif
     
     def get_liste_zone(self):
         return self.liste_zones
@@ -38,11 +42,14 @@ class Carte:
         else :
             return 'already'
     
-    def set_pos_actuel(self, _pos):
+    def set_pos(self, _pos):
         self.pos = _pos
     
     def set_reversed(self, _reversed):
         self.reversed = _reversed
+
+    def get_objectif(self, _objectif):
+        self.objectif = _objectif
     
     def increase_pos(self):
         pos_int = self.liste_zones.index(self.pos)

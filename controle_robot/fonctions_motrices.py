@@ -89,6 +89,13 @@ def lacher_cube():
     time.sleep(3)
 
 def cherche_cube():
+    # Se cadrer
+    mes_roues.reculer()
+    time.sleep(1)
+    mes_roues.droite()
+    time.sleep(1)
+
+    # Boucle pour ce mettre à la bonne distance du cube
     while int(distanceMesure()) > 2 or int(distanceMesure()) < 1:
         if int(distanceMesure()) > 2:
             mes_roues.avancer()
@@ -97,39 +104,51 @@ def cherche_cube():
         else:
             break
     attraper_cube()
-
-def get_best_container():
-    return carte_terrain.get_best_container()
+    
+    # Se remettre sur la ligne
+    mes_roues.gauche()
+    time.sleep(1)
+    mes_roues.reculer()
+    time.sleep(1)
+    carte_terrain.set_objectif(carte_terrain.get_best_container())
 
 def cherche_container():
-    if carte_terrain.get_pos()[0] == 'e':
-        # On centre
-        mes_roues.avancer()
-        time.sleep(1.5)
-        # On va dans la zone
-        mes_roues.droite()
-        time.sleep(1)
-        mes_roues.stop()
-        lacher_cube()
-        # On reviens sur la ligne
-        mes_roues.gauche()
-        time.sleep(1)
-        mes_roues.stop()
-    elif carte_terrain.get_pos()[0] == 's':
-        # On centre
-        mes_roues.avancer()
-        time.sleep(1.5)
-        # On va dans la zone
-        mes_roues.gauche()
-        time.sleep(1)
-        mes_roues.stop()
-        lacher_cube()
-        # On reviens sur la ligne
-        mes_roues.droite()
-        time.sleep(1)
-        mes_roues.stop()
-    else:
-        print("erreur de position")
+    # if carte_terrain.get_pos()[0] == 'e':
+
+    # On centre
+    mes_roues.avancer()
+    time.sleep(1.5)
+    # On va dans la zone
+    mes_roues.droite()
+    time.sleep(1)
+    mes_roues.avancer()
+    time.sleep(1)
+    mes_roues.stop()
+    lacher_cube()
+    # On reviens sur la ligne
+    mes_roues.reculer()
+    time.sleep(1)
+    mes_roues.gauche()
+    time.sleep(1)
+    mes_roues.stop()
+    
+    carte_terrain.set_objectif('base')
+
+    # elif carte_terrain.get_pos()[0] == 's':
+    #     # On centre
+    #     mes_roues.avancer()
+    #     time.sleep(1.5)
+    #     # On va dans la zone
+    #     mes_roues.gauche()
+    #     time.sleep(1)
+    #     mes_roues.stop()
+    #     lacher_cube()
+    #     # On reviens sur la ligne
+    #     mes_roues.droite()
+    #     time.sleep(1)
+    #     mes_roues.stop()
+    # else:
+    #     print("erreur de position")
 
 
 def test_servo2():

@@ -13,10 +13,10 @@ class Roues:
     
     # Fonction pour contrôler un moteur
     def moteur_a(self, vitesse):
-        if vitesse > 0:
+        if vitesse < 0:
             self.IN1.value(1)
             self.IN2.value(0)
-        elif vitesse < 0:
+        elif vitesse > 0:
             self.IN1.value(0)
             self.IN2.value(1)
         else:
@@ -24,10 +24,10 @@ class Roues:
             self.IN2.value(0)
 
     def moteur_b(self, vitesse):
-        if vitesse > 0:
+        if vitesse < 0:
             self.IN3.value(1)
             self.IN4.value(0)
-        elif vitesse < 0:
+        elif vitesse > 0:
             self.IN3.value(0)
             self.IN4.value(1)
         else:

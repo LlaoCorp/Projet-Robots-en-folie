@@ -10,24 +10,17 @@ def test_pwm():
     in2 = PWM(Pin(27), freq=500, duty=500)
 
 init_connexion()
-objectif = 'c1'
-print(carte_terrain.get_pos())
 already_on = False
 
 # Début de la boucle
 while True:
     print(distanceMesure())
     try:
-        if objectif != carte_terrain.get_pos():
+        if carte_terrain.get_objectif != carte_terrain.get_pos():
             already_on = suivre_ligne(already_on)
-            # time.sleep(1)
         else:
             carte_terrain.increase_pos()
-            # test_servo2()
-            # continue
-        # test = request()
-        # print(test.status_code, test.text)
-        # cherche_cube()
+            # cherche_cube()
         
     except KeyboardInterrupt:
         mes_roues.stop()
