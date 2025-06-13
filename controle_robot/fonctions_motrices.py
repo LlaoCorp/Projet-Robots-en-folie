@@ -30,12 +30,12 @@ def se_retourner(side):
 def suivre_ligne(already_on):
     if capteur_gauche.value() != 0 and capteur_droite.value() != 0:
         mes_roues.stop()
-        time.sleep(1)
+        time.sleep(0.2)
         if already_on == False:
             carte_terrain.increase_pos()
         else:
             mes_roues.avancer()
-            time.sleep(1)
+            time.sleep(0.2)
         return True
         # se_retourner(False)
         # print("stop")
@@ -44,15 +44,15 @@ def suivre_ligne(already_on):
         # print("avance")
     elif capteur_gauche.value() == 0 and capteur_droite.value() != 0:
         mes_roues.stop()
-        time.sleep(0.5)
+        time.sleep(0.2)
         mes_roues.gauche()
-        time.sleep(1)
+        time.sleep(0.1)
         # print("gauche")
     else:
         mes_roues.stop()
-        time.sleep(0.5)
+        time.sleep(0.2)
         mes_roues.droite()
-        time.sleep(1)
+        time.sleep(0.1)
         # print("droite")
     return False
 
@@ -76,7 +76,7 @@ def attraper_cube():
     #     time.sleep(0.05)
     # set_angle(45)
     # time.sleep(3)
-    set_angle(90)
+    set_angle(180)
     time.sleep(3)
 
 def lacher_cube():
@@ -85,7 +85,7 @@ def lacher_cube():
     #     time.sleep(0.5)
     # set_angle(135)
     # time.sleep(3)
-    set_angle(180)
+    set_angle(90)
     time.sleep(3)
 
 def cherche_cube():

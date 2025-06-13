@@ -1,4 +1,4 @@
-import sys, json, network, time, urequests
+import sys, json, network, time, urequests, ubinascii
 
 ## Configuration de la connexion Wi-Fis
 ssid = 'IMERIR Fablab'
@@ -21,6 +21,7 @@ password = 'imerir66'
 
 def init_connexion():
     wlan = network.WLAN(network.STA_IF)
+    print(ubinascii.hexlify(wlan.config('mac')).decode())
     wlan.active(True)
     if not wlan.isconnected():
         print(f"Try connect to SSID : {ssid}")

@@ -6,19 +6,26 @@ from connexion import *
 
 init_connexion()
 already_on = False
+test = ''
 
 # Début de la boucle
 while True:
-    print(distanceMesure())
+    # print(distanceMesure())
     try:
-        if carte_terrain.get_objectif != carte_terrain.get_pos():
+        if carte_terrain.get_objectif() != carte_terrain.get_pos():
             already_on = suivre_ligne(already_on)
-        elif carte_terrain.get_pos[0] == 'c':
-            carte_terrain.increase_pos()
-            # cherche_cube()
-        elif carte_terrain.get_pos != 'base':
-            # cherche_container()
+            # if (test != carte_terrain.get_pos()):
+            #     test = carte_terrain.get_pos()
+            #     print(carte_terrain.get_pos()[0])
+        elif carte_terrain.get_pos()[0] == 'c':
+            # carte_terrain.increase_pos()
+            print("cherche_cube")
+            cherche_cube()
+            print("fin cherche_cube")
+        elif carte_terrain.get_pos() != 'base':
             print("cherche_container")
+            cherche_container()
+            print("fin cherche_container")
         else:
             mes_roues.stop()
             break

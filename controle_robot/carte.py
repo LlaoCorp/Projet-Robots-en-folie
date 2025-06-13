@@ -1,6 +1,6 @@
 class Carte:
     def __init__(self, objectif='c3', position_actuel='base'):
-        self.liste_zones = ['base', 'c0', 'c1', 'e0', 's0' 'c2', 'c3', 'e1', 's1', 'c4']
+        self.liste_zones = ['base', 'c0', 'c1', 'e0', 's0', 'c2', 'c3', 'e1', 's1', 'c4']
         self.pos = position_actuel
         self.reversed = False
         self.objectif = objectif
@@ -48,15 +48,17 @@ class Carte:
     def set_reversed(self, _reversed):
         self.reversed = _reversed
 
-    def get_objectif(self, _objectif):
+    def set_objectif(self, _objectif):
         self.objectif = _objectif
+        print('objectif : ' + _objectif)
     
     def increase_pos(self):
         pos_int = self.liste_zones.index(self.pos)
-        if pos_int >= len(self.liste_zones):
+        if pos_int >= (len(self.liste_zones) - 1):
             self.pos = self.liste_zones[0]
         else:
             self.pos = self.liste_zones[pos_int + 1]
+        print(self.pos, pos_int)
     
     def decrease_pos(self):
         pos_int = self.liste_zones.index(self.pos)
