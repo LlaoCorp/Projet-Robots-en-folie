@@ -10,7 +10,13 @@ class Roues:
         # ROUES Gauches
         self.IN3 = Pin(PIN3, Pin.OUT)
         self.IN4 = Pin(PIN4, Pin.OUT)
+
+        # Data
+        self.status_deplacement = 'stop'
     
+    def get_status_deplacement(self):
+        return self.status_deplacement
+
     # Fonction pour contrôler le moteur droit
     def moteur_a(self, vitesse):
         if vitesse < 0:
@@ -38,19 +44,24 @@ class Roues:
     def avancer(self):
         self.moteur_a(1)  # Valeur PWM entre 0 et 1023
         self.moteur_b(1)
+        self.status_deplacement = 'avancer'
     
     def reculer(self):
         self.moteur_a(-1)
         self.moteur_b(-1)
+        self.status_deplacement = 'reculer'
     
     def stop(self):
         self.moteur_a(0)
         self.moteur_b(0)
+        self.status_deplacement = 'stop'
     
     def droite(self):
         self.moteur_a(0)
         self.moteur_b(1)
+        self.status_deplacement = 'droite'
 
     def gauche(self):
         self.moteur_a(1)
         self.moteur_b(0)
+        self.status_deplacement = 'gauche'
