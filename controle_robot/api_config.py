@@ -22,11 +22,11 @@ class ClientAPI:
             if res.status_code == 200:
                 data = res.json()
                 blocks = data.get("blocks", [])
-                statut = data.get("statut", "")
+                status = data.get("status", "")
                 print("Instruction reçue :", data)
 
                 self.modifier_status_instruction(ref_id, "current")
-                return {"ref_id": ref_id, "blocks": blocks, "statut": statut}
+                return {"ref_id": ref_id, "blocks": blocks, "status": status}
             else:
                 print("Erreur récupération instruction - Code :", res.status_code)
             res.close()
@@ -34,12 +34,12 @@ class ClientAPI:
             print("Erreur GET instruction :", e)
         return None
 
-    def modifier_status_instruction(self, ref_id, statut):
+    def modifier_status_instruction(self, ref_id, status):
         payload = {
             "robot_id": ref_id,
-            "statut": statut
+            "status": status
         }
-        self.envoyer(f"/mission/change_statut/{ref_id}", payload)
+        self.envoyer(f"/mission/change_status/{ref_id}", payload)
 
     def envoyer_telemetry(self, ref_id, ds_ultrasons, status_deplacement, ligne, status_pince):
         payload = {

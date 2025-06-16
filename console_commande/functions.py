@@ -10,7 +10,7 @@ def envoyer_instruction(blocks: list[int], text_output, robot_id):
         payload = {
             "robot_id": robot_id,
             "blocks": blocks,
-            "statut": "new"
+            "status": "new"
         }
 
         res = requests.post(f"{API_HOST}/instructions", json=payload)
@@ -66,14 +66,14 @@ def afficher_telemetrie(zone_telemetrie, robot_id):
 
             vitesse = donnees.get("vitesse_instant", "N/A")
             distance = donnees.get("ds_ultrasons", "N/A")
-            statut = donnees.get("status_deplacement", "N/A")
+            status = donnees.get("status_deplacement", "N/A")
             pince = donnees.get("status_pince", "N/A")
             ligne = donnees.get("ligne", "N/A")
 
             texte = (
                 f"Vitesse : {vitesse}\n"
                 f"Distance : {distance} cm\n"
-                f"Déplacement : {statut}\n"
+                f"Déplacement : {status}\n"
                 f"Pince : {'fermée' if pince else 'ouverte'}\n"
                 f"Ligne : {ligne}"
             )

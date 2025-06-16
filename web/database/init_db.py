@@ -48,7 +48,7 @@ def init_db():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         robot_id TEXT NOT NULL,
         blocks LIST NOT NULL,
-        statut TEXT NOT NULL,
+        status TEXT NOT NULL,
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (robot_id) REFERENCES ref(id)
     );

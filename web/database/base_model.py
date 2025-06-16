@@ -15,7 +15,7 @@ from datetime import datetime
 # class Mission(BaseModel):
 #     ref_id: str
 #     num_cube: str
-#     statut: str
+#     status: str
 class Initialisation(BaseModel):
     ref_id: str
     position: int
@@ -43,5 +43,5 @@ class Summary(BaseModel):
 class Instruction(BaseModel):
     robot_id: str
     blocks: list[int]
-    statut: str
+    status: str
 

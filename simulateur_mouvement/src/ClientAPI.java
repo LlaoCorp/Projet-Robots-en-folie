@@ -51,7 +51,7 @@ public class ClientAPI {
         JSONObject payload = new JSONObject();
         payload.put("robot_id", refId);
         payload.put("blocks", blocks);
-        payload.put("statut", "new");
+        payload.put("status", "new");
         envoyer("/instructions", payload.toString());
     }
 
@@ -80,9 +80,9 @@ public class ClientAPI {
                     cubes.add(blocksArray.getInt(i));
                 }
 
-                String statut = "current";
+                String status = "current";
                 modifierStatusInstruction(refId, "current");
-                return new Instruction(refId, cubes, statut);
+                return new Instruction(refId, cubes, status);
             } else {
                 System.out.println("Erreur récupération instruction (code " + responseCode + ")");
                 return null;
@@ -93,11 +93,11 @@ public class ClientAPI {
         }
     }
 
-    public void modifierStatusInstruction(String refId, String statut) {
+    public void modifierStatusInstruction(String refId, String status) {
         JSONObject payload = new JSONObject();
         payload.put("robot_id", refId);
-        payload.put("statut", statut);
-        envoyer("/mission/change_statut/"+refId, payload.toString());
+        payload.put("status", status);
+        envoyer("/mission/change_status/"+refId, payload.toString());
     }
 
     public void envoyerTelemetry(String refId, float vitesse_instant, float ds_ultrasons, String status_deplacement, Integer ligne, boolean status_pince){

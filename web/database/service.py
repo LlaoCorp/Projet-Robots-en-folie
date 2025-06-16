@@ -15,16 +15,16 @@ def create_robot(id: str, name: str):
     conn.close()
     return True
 
-def enregistrer_instruction(robot_id: str, blocks: list, statut: str):
+def enregistrer_instruction(robot_id: str, blocks: list, status: str):
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("SELECT COUNT(*) FROM ref WHERE id = ?", (robot_id,))
     if cursor.fetchone()[0] == 0:
         return False
     cursor.execute("""
-        INSERT INTO instructions (robot_id, blocks, statut)
+        INSERT INTO instructions (robot_id, blocks, status)
         VALUES (?, ?, ?)
-    """, (robot_id, str(blocks), statut))
+    """, (robot_id, str(blocks), status))
     conn.commit()
     conn.close()
     return True
@@ -33,40 +33,40 @@ def get_current_instruction(robot_id: str):
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT blocks, statut
+        SELECT blocks, status
         FROM instructions
-        WHERE robot_id = ? AND statut = 'new'
+        WHERE robot_id = ? AND status = 'new'
         ORDER BY id DESC
         LIMIT 1
     """, (robot_id,))
     row = cursor.fetchone()
     if row:
-        return {"robot_id": robot_id, "blocks": row[0], "statut": row[1]}
+        return {"robot_id": robot_id, "blocks": row[0], "status": row[1]}
     return None
 
 def get_instructions(robot_id: str):
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT blocks, statut
+        SELECT blocks
         FROM instructions
         WHERE robot_id = ?
         ORDER BY id DESC
     """, (robot_id,))
     rows = cursor.fetchall()
-    instructions = [{"blocks": row[0], "statut": row[1]} for row in rows]
+    instructions = [{"blocks": row[0]} for row in rows]
     conn.close()
     return instructions
 
-def changer_statut_instruction(robot_id: str, statut: str):
+def changer_status_instruction(robot_id: str, status: str):
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("""
         UPDATE instructions
-        SET statut = ?
+        SET status = ?
         WHERE robot_id = ?
         AND id = (SELECT id FROM instructions WHERE robot_id = ? ORDER BY id DESC LIMIT 1)
-    """, (statut, robot_id, robot_id))
+    """, (status, robot_id, robot_id))
     conn.commit()
     updated = cursor.rowcount
     conn.close()
