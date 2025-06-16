@@ -22,11 +22,10 @@ class ClientAPI:
             if res.status_code == 200:
                 data = res.json()
                 blocks = data.get("blocks", [])
-                status = data.get("status", "")
                 print("Instruction reçue :", data)
 
                 self.modifier_status_instruction(ref_id, "current")
-                return {"ref_id": ref_id, "blocks": blocks, "status": status}
+                return blocks
             else:
                 print("Erreur récupération instruction - Code :", res.status_code)
             res.close()

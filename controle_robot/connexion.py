@@ -6,19 +6,19 @@ password = 'imerir66'
 wlan = network.WLAN(network.STA_IF)
 
 #  @return Réponse du serveur à la requête POST.
-async def request():
-    try:
-        data = {
-                "ref_id": "robotTest",
-                "contenu": "test"
-            }
-        json_str = json.dumps(data)
-        print(json_str)
-        res = urequests.post(url='http://10.7.5.148:8000/envoyer/', json=json_str, headers={'content-type': 'application/json'})
-        return res
-    except Exception as exc:
-        print("erreur",exc)
-    time.sleep(2)
+# async def request():
+#     try:
+#         data = {
+#                 "ref_id": "robotTest",
+#                 "contenu": "test"
+#             }
+#         json_str = json.dumps(data)
+#         print(json_str)
+#         res = urequests.post(url='http://10.7.5.148:8000/envoyer/', json=json_str, headers={'content-type': 'application/json'})
+#         return res
+#     except Exception as exc:
+#         print("erreur",exc)
+#     time.sleep(2)
 
 def get_adr_mac():
     return ubinascii.hexlify(wlan.config('mac')).decode()

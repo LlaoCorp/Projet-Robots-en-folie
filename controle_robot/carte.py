@@ -1,16 +1,19 @@
 class Carte:
-    def __init__(self, objectif='c3', status_pince=True, position_actuel='base'):
+    def __init__(self, status_pince=True, position_actuel='base'):
         self.liste_zones = ['base', 'c0', 'c1', 'e0', 's0', 'c2', 'c3', 'e1', 's1', 'c4']
         self.pos = position_actuel
         self.reversed = False
-        self.objectif = objectif
+        self.objectif = 'base'
+        self.objectif_list = []
         self.status_pince = status_pince
 
-        self.colors = { 'c0': 'jaune',
-                        'c1': 'rouge',
-                        'c2': 'roze',
-                        'c3': 'bleu',
-                        'c4': 'vert' }
+        # self.colors = { 'c0': 'jaune',
+        #                 'c1': 'rouge',
+        #                 'c2': 'roze',
+        #                 'c3': 'bleu',
+        #                 'c4': 'vert' }
+                        
+        self.cube_int = {2: 'c0', 3: 'c1', 6: 'c2', 7: 'c3', 10: 'c4'}
     
     def get_pos(self):
         return self.pos
@@ -26,6 +29,9 @@ class Carte:
     
     def get_objectif(self):
         return self.objectif
+    
+    def get_objectif_list(self):
+        return self.objectif_list
     
     def get_liste_zone(self):
         return self.liste_zones
@@ -60,7 +66,15 @@ class Carte:
 
     def set_objectif(self, _objectif):
         self.objectif = _objectif
-        print('objectif : ' + _objectif)
+        
+    def delete_prev_objectif(self):
+        self.objectif_list = self.objectif_list.remove(self.objectif_list[0])
+
+    def set_objectif_by_int(self, _int_list):
+        _objectif = []
+        for i in _int_list:
+            _objectif.append(cube_int[i])
+        self.objectif_list = _objectif
     
     def increase_pos(self):
         pos_int = self.get_pos_int()
