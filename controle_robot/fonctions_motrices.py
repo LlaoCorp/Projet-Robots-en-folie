@@ -75,24 +75,14 @@ def set_angle(angle):
 
 # FONCTIONS DU CUBE
 def attraper_cube():
-    # for angle in range(0, 181, 10):
-    #     set_angle(angle)
-    #     time.sleep(0.05)
-    # set_angle(45)
-    # time.sleep(3)
     set_angle(180)
     time.sleep(3)
-    set_status_pince(False)
+    carte_terrain.set_status_pince(False)
 
 def lacher_cube():
-    # for angle in range(180, -1, -10):
-    #     set_angle(angle)
-    #     time.sleep(0.5)
-    # set_angle(135)
-    # time.sleep(3)
     set_angle(90)
     time.sleep(3)
-    set_status_pince(True)
+    carte_terrain.set_status_pince(True)
 
 def cherche_cube():
     # Se cadrer

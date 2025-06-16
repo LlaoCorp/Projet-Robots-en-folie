@@ -38,7 +38,7 @@ class ClientAPI:
             "robot_id": ref_id,
             "status": status
         }
-        self.envoyer(f"/mission/change_status/{ref_id}", payload)
+        self.envoyer(f"/instructions/change_status/{ref_id}", payload)
 
     def envoyer_telemetry(self, ref_id, ds_ultrasons, status_deplacement, ligne, status_pince):
         payload = {

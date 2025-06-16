@@ -73,8 +73,9 @@ class Carte:
     def set_objectif_by_int(self, _int_list):
         _objectif = []
         for i in _int_list:
-            _objectif.append(cube_int[i])
+            _objectif.append(self.cube_int[i])
         self.objectif_list = _objectif
+        self.objectif = _objectif[0]
     
     def increase_pos(self):
         pos_int = self.get_pos_int()
