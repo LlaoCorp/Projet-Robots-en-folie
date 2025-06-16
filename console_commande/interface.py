@@ -1,6 +1,6 @@
 from tkinter import *
 from tkinter import ttk
-from functions import envoyer_instruction, afficher_instruction, afficher_telemetrie, instruction_en_cours, afficher_output
+from functions import envoyer_instruction, afficher_instruction, afficher_telemetrie, instruction_en_cours
 
 boucle_active = True
 
@@ -37,31 +37,48 @@ label_robot_id.grid(row=1, column=0, padx=5, pady=5)
 entry_robot_id = Entry(frame_mission, font=("Segoe UI", 12), width=30)
 entry_robot_id.grid(row=1, column=1, padx=5, pady=5)
 
-label_mission = Label(frame_mission, text="Liste de blocs (séparés par des virgules)", font=("Segoe UI", 12), bg="#f3f4f6")
-label_mission.grid(row=0, column=0, padx=5)
+# label_mission = Label(frame_mission, text="Liste de blocs (séparés par des virgules)", font=("Segoe UI", 12), bg="#f3f4f6")
+# label_mission.grid(row=0, column=0, padx=5)
 
-entry_blocs = Entry(frame_mission, font=("Segoe UI", 12), width=30)
-entry_blocs.grid(row=0, column=1, padx=5)
+# entry_blocs = Entry(frame_mission, font=("Segoe UI", 12), width=30)
+# entry_blocs.grid(row=0, column=1, padx=5)
+
+# Couleurs et blocs associés
+couleurs_blocs = {
+    "Jaune": 2,
+    "Rouge": 3,
+    "Rose": 6,
+    "Violet": 7,
+    "Vert": 10
+}
+selections = {couleur: BooleanVar() for couleur in couleurs_blocs}
+
+# Affichage des cases à cocher
+row_index = 2
+for i, (couleur, var) in enumerate(selections.items()):
+    check = Checkbutton(frame_mission, text=couleur, variable=var, bg="#f3f4f6", font=("Segoe UI", 12))
+    check.grid(row=row_index, column=i % 2, padx=10, pady=2, sticky="w")
+    if i % 2 == 1:
+        row_index += 1
 
 # Zone de texte de sortie
-text_output = Text(fenetre, height=5, bg="white", font=("Consolas", 11), wrap="word", state="disabled")
-text_output.pack(padx=30, pady=20, fill="both", expand=True)
+# text_output = Text(fenetre, height=5, bg="white", font=("Consolas", 11), wrap="word", state="disabled")
+# text_output.pack(padx=30, pady=20, fill="both", expand=True)
+
+message_label = Label(fenetre, text="", font=("Segoe UI", 12), bg="#f3f4f6", fg="#111827")
+message_label.pack(pady=10)
 
 # Bouton : Envoyer mission
 def bouton_envoyer_instruction():
     robot_id = entry_robot_id.get().strip()
-    texte = entry_blocs.get()
-    if robot_id and texte:
-        blocs = []
-        for element in texte.split(","):
-            element = element.strip()
-            if element.isdigit():
-                blocs.append(int(element))
-        envoyer_instruction(blocs, text_output, robot_id)
-    elif not robot_id:
-        afficher_output("Veuillez entrer un ID de robot.", text_output)
+    if robot_id:
+        blocs = [valeur for couleur, valeur in couleurs_blocs.items() if selections[couleur].get()]
+        if blocs:
+            envoyer_instruction(blocs, message_label, robot_id)
+        else:
+            message_label.config(text="Aucun bloc sélectionné.", fg="red")
     else:
-        afficher_output("Veuillez entrer des blocs de mission.", text_output)
+        message_label.config(text="Veuillez entrer un ID de robot.", fg="red")
 
 # Création du bouton
 btnSendMission = ttk.Button(
@@ -75,9 +92,13 @@ btnSendMission.grid(row=0, column=2, padx=10)
 def button_afficher_instruction():
     robot_id = entry_robot_id.get().strip()
     if robot_id:
-        afficher_instruction(text_output, robot_id)
+        instruction = afficher_instruction(None, robot_id)
+        if instruction:
+            message_label.config(text=f"Mission : {instruction}", fg="green")
+        else:
+            message_label.config(text="Aucune instruction trouvée.", fg="orange")
     else:
-        afficher_output("Veuillez entrer un ID de robot.", text_output)
+        message_label.config(text="Veuillez entrer un ID de robot.", fg="red")
 
 # Bouton : Voir mission
 btnVoirMission = ttk.Button(
@@ -93,7 +114,7 @@ def bouton_sauvegarder_robot():
     if robot_id:
         boucle_rafraichissement()
     else:
-        afficher_output("Veuillez entrer un ID de robot.", text_output)
+        message_label.config(text="Veuillez entrer un ID de robot.", fg="red")
 
 # Bouton : Voir mission
 btnSaveRobot = ttk.Button(
@@ -133,6 +154,6 @@ def boucle_rafraichissement():
             fenetre.after(1000, boucle_rafraichissement)
     else:
         boucle_active = False
-        afficher_output("Aucune mission en cours pour ce robot.", zone_telemetrie)
+        message_label.config(text="Aucune mission en cours pour ce robot", fg="red")
     
 fenetre.mainloop()

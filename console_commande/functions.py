@@ -1,11 +1,9 @@
 import requests
 import datetime
-import uuid
 
 API_HOST = "http://10.7.5.148:8000/"
-ROBOT_ID = ""
 
-def envoyer_instruction(blocks: list[int], text_output, robot_id):
+def envoyer_instruction(blocks: list[int], message_label, robot_id):
     try:
         payload = {
             "robot_id": robot_id,
@@ -16,30 +14,32 @@ def envoyer_instruction(blocks: list[int], text_output, robot_id):
         res = requests.post(f"{API_HOST}/instructions", json=payload)
 
         if res.status_code == 200:
-            afficher_output("Instruction envoyée avec succès", text_output)
+            afficher_output("Instruction envoyée avec succès", message_label, "green")
         else:
-            afficher_output(f"Erreur {res.status_code} : {res.text}", text_output)
+            afficher_output(f"Erreur {res.status_code} : {res.text}", message_label, "red")
 
     except Exception as e:
-        afficher_output(f"Exception : {e}", text_output)
+        afficher_output(f"Exception : {e}", message_label, "red")
 
-def afficher_instruction(text_output, robot_id):
-    try:
-        res = requests.get(f"{API_HOST}/instructions/{robot_id}")
-        if res.status_code == 200:
-            instruction = res.json()
-            afficher_output(f"Instruction actuelle : récupérer les cubes {instruction['blocks']}", text_output)
-        else:
-            afficher_output(f"Erreur {res.status_code} : {res.text}", text_output)
-    except Exception as e:
-        afficher_output(f"Exception lors de la lecture de l'instruction : {e}", text_output)
+def afficher_instruction(text_output=None, robot_id=None):
+    instruction = get_current_instruction(robot_id)
+    if not instruction:
+        return None
 
-def afficher_output(msg, text_output):
-    text_output.config(state="normal")
+    blocs = instruction["blocks"]
+    texte_instruction = " - ".join(str(b) for b in blocs)
+
+    if text_output:
+        text_output.config(state="normal")
+        text_output.delete("1.0", END)
+        text_output.insert("1.0", f"Instruction : {texte_instruction}")
+        text_output.config(state="disabled")
+    return texte_instruction
+
+
+def afficher_output(msg, message_label, couleur="black"):
     timestamp = datetime.datetime.now().strftime('%H:%M:%S')
-    text_output.insert("end", f"[{timestamp}] {msg}\n")
-    text_output.see("end")
-    text_output.config(state="disabled")
+    message_label.config(text=f"[{timestamp}] {msg}", fg=couleur)
 
 def instruction_en_cours(robot_id: str) -> bool:
     try:
@@ -57,7 +57,10 @@ def afficher_telemetrie(zone_telemetrie, robot_id):
         data = res_instruction.json()
 
         if not data.get("success", False):
-            afficher_output("Aucun ordre en cours pour ce robot.", zone_telemetrie)
+            zone_telemetrie.config(state="normal")
+            zone_telemetrie.delete("1.0", "end")
+            zone_telemetrie.insert("end", "Aucun ordre en cours pour ce robot.")
+            zone_telemetrie.config(state="disabled")
             return
 
         res = requests.get(f"{API_HOST}/telemetry/{robot_id}")
@@ -83,7 +86,13 @@ def afficher_telemetrie(zone_telemetrie, robot_id):
             zone_telemetrie.insert("end", texte)
             zone_telemetrie.config(state="disabled")
         else:
-            afficher_output(f"Erreur récupération télémétrie : {res.status_code}", zone_telemetrie)
+            zone_telemetrie.config(state="normal")
+            zone_telemetrie.delete("1.0", "end")
+            zone_telemetrie.insert("end", f"Erreur récupération télémétrie : {res.status_code}")
+            zone_telemetrie.config(state="disabled")
 
     except Exception as e:
-        afficher_output(f"Exception lors de la récupération des données : {e}", zone_telemetrie)
+        zone_telemetrie.config(state="normal")
+        zone_telemetrie.delete("1.0", "end")
+        zone_telemetrie.insert("end", f"Exception lors de la récupération des données : {e}")
+        zone_telemetrie.config(state="disabled")
