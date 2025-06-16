@@ -1,9 +1,15 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from api.router import router as robot_router
 from fastapi.middleware.cors import CORSMiddleware
 from database.init_db import init_db
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
 
 app = FastAPI()
+app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
+
 
 origins = [
     "http://127.0.0.1:8000",
@@ -11,7 +17,8 @@ origins = [
     "http://localhost:8000",
     "http://0.0.0.0:8000",
     "http://10.7.5.148",
-    "http://10.7.5.131"
+    "http://10.7.5.131",
+    "http://192.168.1.21",
 ]
 
 app.add_middleware(

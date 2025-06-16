@@ -6,7 +6,8 @@ def init_db():
 
     curseur.execute("""
     CREATE TABLE IF NOT EXISTS ref (
-        id TEXT PRIMARY KEY
+        id TEXT PRIMARY KEY,
+        name TEXT
     );
     """)
 
@@ -47,7 +48,7 @@ def init_db():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         robot_id TEXT NOT NULL,
         blocks LIST NOT NULL,
-        statut TEXT NOT NULL,
+        status TEXT NOT NULL,
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (robot_id) REFERENCES ref(id)
     );
@@ -71,7 +72,6 @@ def init_db():
     CREATE TABLE IF NOT EXISTS summary (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         robot_id TEXT NOT NULL,
-        vitesse_moy REAL,
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (robot_id) REFERENCES ref(id)
     );

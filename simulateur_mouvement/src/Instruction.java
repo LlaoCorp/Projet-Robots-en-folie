@@ -3,12 +3,12 @@ import java.util.ArrayList;
 public class Instruction {
     private String refId;
     private ArrayList<Integer> numCube;
-    private String statut;
+    private String status;
 
-    public Instruction(String refId, ArrayList<Integer> numCube, String statut) {
+    public Instruction(String refId, ArrayList<Integer> numCube, String status) {
         this.refId = refId;
         this.numCube = numCube;
-        this.statut = statut;
+        this.status = status;
     }
 
     public String getRefId() {
@@ -19,11 +19,11 @@ public class Instruction {
         return numCube;
     }
 
-    public String getStatut() {
-        return statut;
+    public String getStatus() {
+        return status;
     }
 
-    public void setStatut(String statut) {
-        this.statut = statut;
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

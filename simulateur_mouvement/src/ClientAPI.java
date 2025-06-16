@@ -51,7 +51,7 @@ public class ClientAPI {
         JSONObject payload = new JSONObject();
         payload.put("robot_id", refId);
         payload.put("blocks", blocks);
-        payload.put("statut", "new");
+        payload.put("status", "new");
         envoyer("/instructions", payload.toString());
     }
 
@@ -74,15 +74,15 @@ public class ClientAPI {
 
                 JSONObject json = new JSONObject(content.toString());
                 JSONArray blocksArray = new JSONArray(json.getString("blocks"));
-                String statut = json.getString("statut");
 
                 ArrayList<Integer> cubes = new ArrayList<>();
                 for (int i = 0; i < blocksArray.length(); i++) {
                     cubes.add(blocksArray.getInt(i));
                 }
 
+                String status = "current";
                 modifierStatusInstruction(refId, "current");
-                return new Instruction(refId, cubes, statut);
+                return new Instruction(refId, cubes, status);
             } else {
                 System.out.println("Erreur récupération instruction (code " + responseCode + ")");
                 return null;
@@ -93,11 +93,11 @@ public class ClientAPI {
         }
     }
 
-    public void modifierStatusInstruction(String refId, String statut) {
+    public void modifierStatusInstruction(String refId, String status) {
         JSONObject payload = new JSONObject();
         payload.put("robot_id", refId);
-        payload.put("statut", statut);
-        envoyer("/mission/change_statut/"+refId, payload.toString());
+        payload.put("status", status);
+        envoyer("/mission/change_status/"+refId, payload.toString());
     }
 
     public void envoyerTelemetry(String refId, float vitesse_instant, float ds_ultrasons, String status_deplacement, Integer ligne, boolean status_pince){
@@ -111,10 +111,9 @@ public class ClientAPI {
         envoyer("/telemetry", payload.toString());
     }
 
-    public void envoyerSummary(String refId, float viesse_moy){
+    public void envoyerSummary(String refId){
         JSONObject payload = new JSONObject();
         payload.put("robot_id", refId);
-        payload.put("viesse_moy", viesse_moy);
         envoyer("/summary", payload.toString());
     }
 }
