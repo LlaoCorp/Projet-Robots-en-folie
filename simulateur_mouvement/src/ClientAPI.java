@@ -74,13 +74,13 @@ public class ClientAPI {
 
                 JSONObject json = new JSONObject(content.toString());
                 JSONArray blocksArray = new JSONArray(json.getString("blocks"));
-                String statut = json.getString("statut");
 
                 ArrayList<Integer> cubes = new ArrayList<>();
                 for (int i = 0; i < blocksArray.length(); i++) {
                     cubes.add(blocksArray.getInt(i));
                 }
 
+                String statut = "current";
                 modifierStatusInstruction(refId, "current");
                 return new Instruction(refId, cubes, statut);
             } else {
@@ -111,10 +111,9 @@ public class ClientAPI {
         envoyer("/telemetry", payload.toString());
     }
 
-    public void envoyerSummary(String refId, float viesse_moy){
+    public void envoyerSummary(String refId){
         JSONObject payload = new JSONObject();
         payload.put("robot_id", refId);
-        payload.put("viesse_moy", viesse_moy);
         envoyer("/summary", payload.toString());
     }
 }
