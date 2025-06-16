@@ -58,3 +58,26 @@ class ClientAPI:
             "viesse_moy": vitesse_moy
         }
         self.envoyer("/summary", payload)
+
+    def envoyer_message(self, ref_id, message):
+        payload = {
+            "robot_id": ref_id,
+            "message": message
+        }
+        self.envoyer("/message", payload)
+    
+    def recuperer_messages(self, ref_id):
+        try:
+            url = self.base_url + f"/message/{ref_id}"
+            res = urequests.get(url)
+            if res.status_code == 200:
+                data = res.json()
+                messages = data.get("messages", [])
+                print("Messages reçus :", messages)
+                return messages
+            else:
+                print("Erreur récupération messages - Code :", res.status_code)
+            res.close()
+        except Exception as e:
+            print("Erreur GET messages :", e)
+        return []

@@ -1,5 +1,6 @@
 import sys
 import os
+import ast
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from fastapi import APIRouter, Form, Request
@@ -62,7 +63,7 @@ async def list_missions(robot_id: str):
 async def recuperer_instruction(robot_id: str):
     instruction = get_current_instruction(robot_id)
     if instruction:
-        return {"success": True, "blocks": instruction["blocks"]}
+        return {"success": True, "blocks": ast.literal_eval(instruction["blocks"])}
     return {"success": False, "message": "Aucune instruction en cours pour ce robot."}
 
 @router.post("/instructions/change_status/{robot_id}")
@@ -72,3 +73,16 @@ async def changer_status_instruction_route(robot_id: str, request: Request):
     if success:
         return {"status": "Statut changé avec succès"}
     return {"status": "Erreur lors du changement de status"}
+
+@router.post("/message")
+async def message(request: Request):
+    payload = await request.json()
+    ajouter_message(payload['robot_id'], payload['message'])
+    return {"status": "Message reçu avec succès"}
+
+@router.get("/message/{robot_id}")
+async def get_message(robot_id: str):
+    messages = recuperer_messages(robot_id)
+    if messages:
+        return {"robot_id": robot_id, "messages": messages}
+    return {"error": "Aucun message trouvé pour ce robot."}

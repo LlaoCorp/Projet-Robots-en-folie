@@ -117,9 +117,6 @@ def enregistrer_summary(summary):
 def ajouter_message(ref_id, contenu):
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT COUNT(*) FROM ref WHERE id = ?", (ref_id,))
-    if cursor.fetchone()[0] == 0:
-        cursor.execute("INSERT INTO ref (id) VALUES (?)", (ref_id,))
     cursor.execute("INSERT INTO messages (ref_id, contenu) VALUES (?, ?)", (ref_id, contenu))
     conn.commit()
     conn.close()
