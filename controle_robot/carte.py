@@ -1,5 +1,5 @@
 class Carte:
-    def __init__(self, objectif='c3', status_pince='ouvert', position_actuel='base'):
+    def __init__(self, objectif='c3', status_pince=True, position_actuel='base'):
         self.liste_zones = ['base', 'c0', 'c1', 'e0', 's0', 'c2', 'c3', 'e1', 's1', 'c4']
         self.pos = position_actuel
         self.reversed = False
@@ -51,6 +51,9 @@ class Carte:
     
     def set_pos(self, _pos):
         self.pos = _pos
+    
+    def set_status_pince(self, _sp):
+        self.status_pince = _sp
     
     def set_reversed(self, _reversed):
         self.reversed = _reversed

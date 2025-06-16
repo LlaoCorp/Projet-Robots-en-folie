@@ -41,6 +41,12 @@ while True:
                 (carte_terrain.get_pos_int() + 1),
                 carte_terrain.get_status_pince()
             )
+            print(
+                get_adr_mac(),
+                distanceMesure(),
+                mes_roues.get_status_deplacement(),
+                (carte_terrain.get_pos_int() + 1),
+                carte_terrain.get_status_pince())
             derniere_telemetry = time.time()
 
         if carte_terrain.get_objectif() != carte_terrain.get_pos():

@@ -78,6 +78,7 @@ def attraper_cube():
     # time.sleep(3)
     set_angle(180)
     time.sleep(3)
+    set_status_pince(False)
 
 def lacher_cube():
     # for angle in range(180, -1, -10):
@@ -87,6 +88,7 @@ def lacher_cube():
     # time.sleep(3)
     set_angle(90)
     time.sleep(3)
+    set_status_pince(True)
 
 def cherche_cube():
     # Se cadrer
