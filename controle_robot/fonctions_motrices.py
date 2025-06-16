@@ -2,17 +2,26 @@ import time, hcsr04, roues, carte
 from machine import Pin, PWM
 
 # Définition des composants
-mes_roues = roues.Roues(14,27,26,25)
-capteur_gauche = Pin(15, Pin.IN)
-capteur_droite = Pin(4, Pin.IN)
-servo = PWM(Pin(13), freq=50)
-carte_terrain = carte.Carte()
+mes_roues = roues.Roues(14,27,26,25)    # Définition des roues
+capteur_gauche = Pin(15, Pin.IN)        # Définition du capteur de ligne gauche
+capteur_droite = Pin(4, Pin.IN)         # Définition du capteur de ligne droite
+servo = PWM(Pin(13), freq=50)           # Définition du servo moteur (pince)
+carte_terrain = carte.Carte()           # Définition de la carte contenant le trajet du robot
 
 # Fonctions
 # ------------
 
 # MOUVEMENTS
+##
 def se_retourner(side):
+    """
+    se_retourner does blah blah blah.
+
+    :param p1: describe about parameter p1
+    :param p2: describe about parameter p2
+    :param p3: describe about parameter p3
+    :return: describe what it returns
+    """ 
     count_lines = 0
     previous_val = 0
     print("tourne")
@@ -37,23 +46,18 @@ def suivre_ligne(already_on):
             mes_roues.avancer()
             time.sleep(0.2)
         return True
-        # se_retourner(False)
-        # print("stop")
     elif capteur_gauche.value() == 0 and capteur_droite.value() == 0:
         mes_roues.avancer()
-        # print("avance")
     elif capteur_gauche.value() == 0 and capteur_droite.value() != 0:
         mes_roues.stop()
         time.sleep(0.2)
         mes_roues.gauche()
         time.sleep(0.1)
-        # print("gauche")
     else:
         mes_roues.stop()
         time.sleep(0.2)
         mes_roues.droite()
         time.sleep(0.1)
-        # print("droite")
     return False
 
 # FONCTIONS PRATIQUES
