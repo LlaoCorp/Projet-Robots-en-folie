@@ -1,31 +1,33 @@
 from pydantic import BaseModel
 from datetime import datetime
 
-class EtatRobot(BaseModel):
-    ref_id: str
-    position: int
-    has_box: bool
-    objectif: str
+# class EtatRobot(BaseModel):
+#     ref_id: str
+#     position: int
+#     has_box: bool
+#     objectif: str
 
-class ActionRobot(BaseModel):
-    ref_id: str
-    action: str
-    position: int
+# class ActionRobot(BaseModel):
+#     ref_id: str
+#     action: str
+#     position: int
 
-class Mission(BaseModel):
-    ref_id: str
-    num_cube: str
-    statut: str
+# class Mission(BaseModel):
+#     ref_id: str
+#     num_cube: str
+#     statut: str
 class Initialisation(BaseModel):
     ref_id: str
     position: int
     has_box: bool
-class Message(BaseModel):
-    ref_id: str
-    contenu: str
+
+# class Message(BaseModel):
+#     ref_id: str
+#     contenu: str
 
 class REF(BaseModel):
-    ref_id: str
+    name: str
+    id: str
 
 class Telemetry(BaseModel):
     robot_id: str = None
@@ -37,7 +39,6 @@ class Telemetry(BaseModel):
 
 class Summary(BaseModel):
     robot_id: str = None
-    vitesse_moy: float = None
 
 class Instruction(BaseModel):
     robot_id: str

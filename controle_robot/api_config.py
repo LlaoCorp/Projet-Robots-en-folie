@@ -16,14 +16,6 @@ class ClientAPI:
         except Exception as e:
             print("Erreur lors de l'envoi :", e)
 
-    def envoyer_instruction(self, ref_id, blocks):
-        payload = {
-            "robot_id": ref_id,
-            "blocks": blocks,
-            "statut": "new"
-        }
-        self.envoyer("/instructions", payload)
-
     def recuperer_instruction(self, ref_id):
         try:
             url = self.base_url + f"/instructions/{ref_id}"
@@ -42,13 +34,6 @@ class ClientAPI:
         except Exception as e:
             print("Erreur GET instruction :", e)
         return None
-
-    def modifier_status_instruction(self, ref_id, statut):
-        payload = {
-            "robot_id": ref_id,
-            "statut": statut
-        }
-        self.envoyer(f"/mission/change_statut/{ref_id}", payload)
 
     async def envoyer_telemetry(self, ref_id, vitesse_instant, ds_ultrasons, status_deplacement, ligne, status_pince):
         payload = {
