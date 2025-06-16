@@ -2,11 +2,10 @@ import ujson as json
 import urequests, time
 
 class ClientAPI:
-
     def __init__(self, server_ip, port=8000):
         self.base_url = f"http://{server_ip}:{port}"
 
-    async def envoyer(self, endpoint, payload):
+    def envoyer(self, endpoint, payload):
         try:
             url = self.base_url + endpoint
             headers = {"Content-Type": "application/json"}
@@ -35,10 +34,17 @@ class ClientAPI:
             print("Erreur GET instruction :", e)
         return None
 
-    async def envoyer_telemetry(self, ref_id, vitesse_instant, ds_ultrasons, status_deplacement, ligne, status_pince):
+    def modifier_status_instruction(self, ref_id, statut):
         payload = {
             "robot_id": ref_id,
-            "vitesse_instant": vitesse_instant,
+            "statut": statut
+        }
+        self.envoyer(f"/mission/change_statut/{ref_id}", payload)
+
+    def envoyer_telemetry(self, ref_id, ds_ultrasons, status_deplacement, ligne, status_pince):
+        payload = {
+            "robot_id": ref_id,
+            "vitesse_instant": 1.0,
             "ds_ultrasons": ds_ultrasons,
             "status_deplacement": status_deplacement,
             "ligne": ligne,

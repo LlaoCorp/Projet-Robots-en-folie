@@ -30,12 +30,12 @@ def se_retourner(side):
 def suivre_ligne(already_on):
     if capteur_gauche.value() != 0 and capteur_droite.value() != 0:
         mes_roues.stop()
-        time.sleep(1)
+        time.sleep(0.2)
         if already_on == False:
             carte_terrain.increase_pos()
         else:
             mes_roues.avancer()
-            time.sleep(1)
+            time.sleep(0.2)
         return True
         # se_retourner(False)
         # print("stop")
@@ -44,15 +44,15 @@ def suivre_ligne(already_on):
         # print("avance")
     elif capteur_gauche.value() == 0 and capteur_droite.value() != 0:
         mes_roues.stop()
-        time.sleep(0.5)
+        time.sleep(0.2)
         mes_roues.gauche()
-        time.sleep(1)
+        time.sleep(0.1)
         # print("gauche")
     else:
         mes_roues.stop()
-        time.sleep(0.5)
+        time.sleep(0.2)
         mes_roues.droite()
-        time.sleep(1)
+        time.sleep(0.1)
         # print("droite")
     return False
 
@@ -76,8 +76,9 @@ def attraper_cube():
     #     time.sleep(0.05)
     # set_angle(45)
     # time.sleep(3)
-    set_angle(90)
+    set_angle(180)
     time.sleep(3)
+    set_status_pince(False)
 
 def lacher_cube():
     # for angle in range(180, -1, -10):
@@ -85,10 +86,18 @@ def lacher_cube():
     #     time.sleep(0.5)
     # set_angle(135)
     # time.sleep(3)
-    set_angle(180)
+    set_angle(90)
     time.sleep(3)
+    set_status_pince(True)
 
 def cherche_cube():
+    # Se cadrer
+    mes_roues.reculer()
+    time.sleep(1)
+    mes_roues.droite()
+    time.sleep(1)
+
+    # Boucle pour ce mettre à la bonne distance du cube
     while int(distanceMesure()) > 2 or int(distanceMesure()) < 1:
         if int(distanceMesure()) > 2:
             mes_roues.avancer()
@@ -97,39 +106,51 @@ def cherche_cube():
         else:
             break
     attraper_cube()
-
-def get_best_container():
-    return carte_terrain.get_best_container()
+    
+    # Se remettre sur la ligne
+    mes_roues.gauche()
+    time.sleep(1)
+    mes_roues.reculer()
+    time.sleep(1)
+    carte_terrain.set_objectif(carte_terrain.get_best_container())
 
 def cherche_container():
-    if carte_terrain.get_pos()[0] == 'e':
-        # On centre
-        mes_roues.avancer()
-        time.sleep(1.5)
-        # On va dans la zone
-        mes_roues.droite()
-        time.sleep(1)
-        mes_roues.stop()
-        lacher_cube()
-        # On reviens sur la ligne
-        mes_roues.gauche()
-        time.sleep(1)
-        mes_roues.stop()
-    elif carte_terrain.get_pos()[0] == 's':
-        # On centre
-        mes_roues.avancer()
-        time.sleep(1.5)
-        # On va dans la zone
-        mes_roues.gauche()
-        time.sleep(1)
-        mes_roues.stop()
-        lacher_cube()
-        # On reviens sur la ligne
-        mes_roues.droite()
-        time.sleep(1)
-        mes_roues.stop()
-    else:
-        print("erreur de position")
+    # if carte_terrain.get_pos()[0] == 'e':
+
+    # On centre
+    mes_roues.avancer()
+    time.sleep(1.5)
+    # On va dans la zone
+    mes_roues.droite()
+    time.sleep(1)
+    mes_roues.avancer()
+    time.sleep(1)
+    mes_roues.stop()
+    lacher_cube()
+    # On reviens sur la ligne
+    mes_roues.reculer()
+    time.sleep(1)
+    mes_roues.gauche()
+    time.sleep(1)
+    mes_roues.stop()
+    
+    carte_terrain.set_objectif('base')
+
+    # elif carte_terrain.get_pos()[0] == 's':
+    #     # On centre
+    #     mes_roues.avancer()
+    #     time.sleep(1.5)
+    #     # On va dans la zone
+    #     mes_roues.gauche()
+    #     time.sleep(1)
+    #     mes_roues.stop()
+    #     lacher_cube()
+    #     # On reviens sur la ligne
+    #     mes_roues.droite()
+    #     time.sleep(1)
+    #     mes_roues.stop()
+    # else:
+    #     print("erreur de position")
 
 
 def test_servo2():
@@ -150,3 +171,7 @@ def test_servo2():
     time.sleep(3)
     #wait
     time.sleep(5)
+
+def test_pwm():
+    in1 = PWM(Pin(26), freq=500, duty=500)
+    in2 = PWM(Pin(27), freq=500, duty=500)
