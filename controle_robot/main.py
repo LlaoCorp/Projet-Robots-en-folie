@@ -4,28 +4,22 @@ from fonctions_motrices import carte_terrain, mes_roues
 from connexion import *
 
 init_connexion()
-already_on = False
 apiConf = api_config.ClientAPI('10.7.5.148')
+already_on = False
+instruction_getted = False
 
-# stop_event = threading.Event() # Crée un événement d'arrêt
+# Boucle pour la récupération d'instruction envoyé par le server
+while instruction_getted == False:
+    print('test 2')
+    time.sleep(1)
+    print('waiting for return...')
+    blocks = apiConf.recuperer_instruction(get_adr_mac())
+    if blocks != None and len(blocks) != 0:
+        carte_terrain.set_objectif_by_int = blocks
+        print(carte_terrain.get_objectif)
+        instruction_getted == True
 
 derniere_telemetry = time.time()
-
-# def boucle_telemetry():
-#     while not stop_event.is_set():
-#         print("envoie telemetric")
-#         apiConf.envoyer_telemetry(self,
-#             get_adr_mac(),
-#             distanceMesure(),
-#             mes_roues.get_status_deplacement(),
-#             (carte_terrain.get_pos_int() + 1),
-#             carte_terrain.get_status_pince()
-#         )
-#         time.sleep(1)
-
-# Lancement du thread secondaire pour la data
-# telemetry_thread = threading.Thread(target=boucle_telemetry, daemon=True)
-# telemetry_thread.start()
 
 # Début de la boucle
 while True:
@@ -68,8 +62,3 @@ while True:
         mes_roues.stop()
         print("Arrêt manuel")
         time.sleep(3)
-
-# Quand le robot s’arrête, on signale au thread telemetry de s’arrêter
-# stop_event.set()
-# telemetry_thread.join()  # Attend que le thread se termine proprement
-# print("Tout est terminé proprement.")

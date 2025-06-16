@@ -134,7 +134,11 @@ def cherche_container():
     time.sleep(1)
     mes_roues.stop()
     
-    carte_terrain.set_objectif('base')
+    if len(carte_terrain.get_objectif_list) > 0:
+        carte_terrain.delete_prev_objectif()
+        carte_terrain.set_objectif(carte_terrain.get_objectif_list()[0])
+    else:
+        carte_terrain.set_objectif('base')
 
     # elif carte_terrain.get_pos()[0] == 's':
     #     # On centre
