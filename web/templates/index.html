@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Console REF - Interface Serveur</title>
+    <link rel="stylesheet" href="../static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Console REF - Interface Serveur</h1>
+
+        <section>
+            <h2>Créer un nouveau robot</h2>
+            <form id="form-creation-robot">
+                <input type="text" id="robot-name" name="name" placeholder="Nom du robot" required>
+                <input type="text" id="robot-id" name="id" placeholder="ID du robot" required>
+                <button type="submit">Créer</button>
+            </form>
+            <div id="confirmation-message" class="confirmation-message"></div>
+        </section>
+
+        <section>
+            <h2>Consulter les missions</h2>
+            <input type="text" id="robot_id_input" placeholder="ID du robot">
+            <button onclick="consulterMissions()">Voir missions</button>
+            <div id="missions-box"></div>
+        </section>
+    </div>
+
+    <script>
+        document.getElementById('form-creation-robot').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const name = document.getElementById('robot-name').value;
+            const id = document.getElementById('robot-id').value;
+            const confirmationDiv = document.getElementById('confirmation-message');
+
+            try {
+                const res = await fetch('/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({ name, id })
+                });
+
+                const data = await res.json();
+                confirmationDiv.textContent = data.message;
+                confirmationDiv.className = 'confirmation-message success';
+                document.getElementById('form-creation-robot').reset();
+            } catch (error) {
+                confirmationDiv.textContent = `Problème de connexion : ${error}`;
+                confirmationDiv.classList.remove('success');
+            }
+        });
+
+        async function consulterMissions() {
+            const robotId = document.getElementById('robot_id_input').value;
+            const box = document.getElementById('missions-box');
+            box.innerHTML = '';
+
+            if (!robotId) {
+                alert('Veuillez entrer un ID.');
+                return;
+            }
+            try {
+                const res = await fetch(`/list-instructions/${robotId}`);
+                const data = await res.json();
+
+                box.innerHTML = '';
+
+                if (data.instructions && data.instructions.length > 0) {
+                    data.instructions.forEach((instruction, index) => {
+                        const blocHtml =`<span class="chip">${instruction.blocks}</span>`;
+
+                        const instructionHtml = `
+                            <div class="instruction-card">
+                                <h3>Missions #${index + 1}</h3>
+                                <div><strong>Blocs a récupérer :</strong> ${blocHtml}</div>
+                                <div><strong>Statut de la mission :</strong> ${instruction.statut}</div>
+                            </div>
+                        `;
+                        box.innerHTML += instructionHtml;
+                    });
+                } else {
+                    box.innerHTML = `<span class='error'>Aucune instruction trouvée.</span>`;
+                }
+            } catch (e) {
+                box.innerHTML = `<span class='error'>Erreur de récupération : ${e}</span>`;
+            }
+        }
+    </script>
+</body>
+</html>
