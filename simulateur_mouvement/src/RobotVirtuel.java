@@ -23,7 +23,7 @@ public class RobotVirtuel {
 
         float vitesse = 1.0f;
         float distanceUltrasons = 20.0f;
-        String statusDeplacement = "moving";
+        String statusDeplacement = "avancer";
         int ligne = position;
         boolean pinceActive = hasBox;
 
