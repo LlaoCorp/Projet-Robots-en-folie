@@ -32,16 +32,10 @@ frame_mission = Frame(fenetre, bg="#f3f4f6")
 frame_mission.pack(pady=10)
 
 label_robot_id = Label(frame_mission, text="ID du robot", font=("Segoe UI", 12), bg="#f3f4f6")
-label_robot_id.grid(row=1, column=0, padx=5, pady=5)
+label_robot_id.grid(row=0, column=0, padx=5, pady=5)
 
 entry_robot_id = Entry(frame_mission, font=("Segoe UI", 12), width=30)
-entry_robot_id.grid(row=1, column=1, padx=5, pady=5)
-
-# label_mission = Label(frame_mission, text="Liste de blocs (séparés par des virgules)", font=("Segoe UI", 12), bg="#f3f4f6")
-# label_mission.grid(row=0, column=0, padx=5)
-
-# entry_blocs = Entry(frame_mission, font=("Segoe UI", 12), width=30)
-# entry_blocs.grid(row=0, column=1, padx=5)
+entry_robot_id.grid(row=0, column=1, padx=5, pady=5)
 
 # Couleurs et blocs associés
 couleurs_blocs = {
@@ -51,19 +45,24 @@ couleurs_blocs = {
     "Violet": 7,
     "Vert": 10
 }
+
+label_couleur = Label(frame_mission, text="Cubes à récupérer", font=("Segoe UI", 12), bg="#f3f4f6")
+label_couleur.grid(row=2, column=0, padx=5, pady=5)
+
+# Création des BooleanVar pour chaque couleur
 selections = {couleur: BooleanVar() for couleur in couleurs_blocs}
 
-# Affichage des cases à cocher
-row_index = 2
-for i, (couleur, var) in enumerate(selections.items()):
-    check = Checkbutton(frame_mission, text=couleur, variable=var, bg="#f3f4f6", font=("Segoe UI", 12))
-    check.grid(row=row_index, column=i % 2, padx=10, pady=2, sticky="w")
-    if i % 2 == 1:
-        row_index += 1
+# Centrage des cases à cocher dans une seule colonne au centre de la page
+frame_mission.grid_columnconfigure(0, weight=1)
+frame_mission.grid_columnconfigure(1, weight=1)
+frame_mission.grid_columnconfigure(2, weight=1)
 
-# Zone de texte de sortie
-# text_output = Text(fenetre, height=5, bg="white", font=("Consolas", 11), wrap="word", state="disabled")
-# text_output.pack(padx=30, pady=20, fill="both", expand=True)
+frame_couleurs = Frame(frame_mission, bg="#f3f4f6")
+frame_couleurs.grid(row=2, column=0, columnspan=4, pady=5)
+
+for i, (couleur, var) in enumerate(selections.items()):
+    check = Checkbutton(frame_couleurs, text=couleur, variable=var, bg="#f3f4f6", font=("Segoe UI", 12))
+    check.grid(row=0, column=i, padx=10)
 
 message_label = Label(fenetre, text="", font=("Segoe UI", 12), bg="#f3f4f6", fg="#111827")
 message_label.pack(pady=10)
@@ -94,9 +93,9 @@ def button_afficher_instruction():
     if robot_id:
         instruction = afficher_instruction(None, robot_id)
         if instruction:
-            message_label.config(text=f"Mission : {instruction}", fg="green")
+            message_label.config(text=f"Cubes à récupérer : {instruction}", fg="green")
         else:
-            message_label.config(text="Aucune instruction trouvée.", fg="orange")
+            message_label.config(text="Aucune instruction trouvée.", fg="red")
     else:
         message_label.config(text="Veuillez entrer un ID de robot.", fg="red")
 
@@ -108,22 +107,6 @@ btnVoirMission = ttk.Button(
     command=button_afficher_instruction
 )
 btnVoirMission.grid(row=0, column=3, padx=10)
-
-def bouton_sauvegarder_robot():
-    robot_id = entry_robot_id.get().strip()
-    if robot_id:
-        boucle_rafraichissement()
-    else:
-        message_label.config(text="Veuillez entrer un ID de robot.", fg="red")
-
-# Bouton : Voir mission
-btnSaveRobot = ttk.Button(
-    frame_mission,
-    text="Sauvegarder robot",
-    style="SendText.TButton",
-    command=bouton_sauvegarder_robot
-)
-btnSaveRobot.grid(row=1, column=2, padx=10)
 
 # Cadre d'affichage de la télémétrie
 frame_telemetrie = Frame(fenetre, bg="#f3f4f6")

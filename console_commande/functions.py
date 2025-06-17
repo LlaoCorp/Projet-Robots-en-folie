@@ -22,19 +22,33 @@ def envoyer_instruction(blocks: list[int], message_label, robot_id):
         afficher_output(f"Exception : {e}", message_label, "red")
 
 def afficher_instruction(text_output=None, robot_id=None):
-    instruction = get_current_instruction(robot_id)
-    if not instruction:
-        return None
+    try:
+        res = requests.get(f"{API_HOST}/instructions/{robot_id}")
+        if res.status_code == 200:
+            data = res.json()
+            if not data.get("success"):
+                if text_output:
+                    text_output.config(state="normal")
+                    text_output.delete("1.0", "end")
+                    text_output.insert("end", "Aucune instruction en cours.")
+                    text_output.config(state="disabled")
+                return None
 
-    blocs = instruction["blocks"]
-    texte_instruction = " - ".join(str(b) for b in blocs)
+            blocs = data.get("blocks", [])
+            texte_instruction = " - ".join(str(b) for b in blocs)
 
-    if text_output:
-        text_output.config(state="normal")
-        text_output.delete("1.0", END)
-        text_output.insert("1.0", f"Instruction : {texte_instruction}")
-        text_output.config(state="disabled")
-    return texte_instruction
+            if text_output:
+                text_output.config(state="normal")
+                text_output.delete("1.0", "end")
+                text_output.insert("1.0", f"Instruction : {texte_instruction}")
+                text_output.config(state="disabled")
+            return texte_instruction
+        else:
+            print(f"Erreur HTTP {res.status_code}")
+    except Exception as e:
+        print(f"Exception lors de la récupération de l'instruction : {e}")
+    return None
+
 
 
 def afficher_output(msg, message_label, couleur="black"):
