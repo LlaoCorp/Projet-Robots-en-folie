@@ -10,7 +10,7 @@ class ClientAPI:
             url = self.base_url + endpoint
             headers = {"Content-Type": "application/json"}
             res = urequests.post(url, data=json.dumps(payload), headers=headers)
-            print(f"Requête POST vers {endpoint} - Code : {res.status_code}")
+            # print(f"Requête POST vers {endpoint} - Code : {res.statut_code}")
             res.close()
         except Exception as e:
             print("Erreur lors de l'envoi :", e)
@@ -19,35 +19,35 @@ class ClientAPI:
         try:
             url = self.base_url + f"/instructions/{ref_id}"
             res = urequests.get(url)
-            if res.status_code == 200:
+            if res.statut_code == 200:
                 data = res.json()
                 blocks = data.get("blocks", [])
                 print("Instruction reçue :", data)
 
-                self.modifier_status_instruction(ref_id, "current")
+                self.modifier_statut_instruction(ref_id, "current")
                 return blocks
             else:
-                print("Erreur récupération instruction - Code :", res.status_code)
+                print("Erreur récupération instruction - Code :", res.statut_code)
             res.close()
         except Exception as e:
             print("Erreur GET instruction :", e)
         return None
 
-    def modifier_status_instruction(self, ref_id, status):
+    def modifier_statut_instruction(self, ref_id, statut):
         payload = {
             "robot_id": ref_id,
-            "status": status
+            "statut": statut
         }
-        self.envoyer(f"/instructions/change_status/{ref_id}", payload)
+        self.envoyer(f"/instructions/change_statut/{ref_id}", payload)
 
-    def envoyer_telemetry(self, ref_id, ds_ultrasons, status_deplacement, ligne, status_pince):
+    def envoyer_telemetry(self, ref_id, ds_ultrasons, statut_deplacement, ligne, statut_pince):
         payload = {
             "robot_id": ref_id,
             "vitesse_instant": 1.0,
             "ds_ultrasons": ds_ultrasons,
-            "status_deplacement": status_deplacement,
+            "statut_deplacement": statut_deplacement,
             "ligne": ligne,
-            "status_pince": status_pince
+            "statut_pince": statut_pince
         }
         self.envoyer("/telemetry", payload)
         time.sleep(1)
@@ -70,13 +70,13 @@ class ClientAPI:
         try:
             url = self.base_url + f"/message/{ref_id}"
             res = urequests.get(url)
-            if res.status_code == 200:
+            if res.statut_code == 200:
                 data = res.json()
                 messages = data.get("messages", [])
                 print("Messages reçus :", messages)
                 return messages
             else:
-                print("Erreur récupération messages - Code :", res.status_code)
+                print("Erreur récupération messages - Code :", res.statut_code)
             res.close()
         except Exception as e:
             print("Erreur GET messages :", e)
