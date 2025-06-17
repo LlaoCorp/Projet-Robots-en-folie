@@ -10,7 +10,7 @@ class ClientAPI:
             url = self.base_url + endpoint
             headers = {"Content-Type": "application/json"}
             res = urequests.post(url, data=json.dumps(payload), headers=headers)
-            # print(f"Requête POST vers {endpoint} - Code : {res.statut_code}")
+            # print(f"Requête POST vers {endpoint} - Code : {res.status_code}")
             res.close()
         except Exception as e:
             print("Erreur lors de l'envoi :", e)
@@ -19,7 +19,7 @@ class ClientAPI:
         try:
             url = self.base_url + f"/instructions/{ref_id}"
             res = urequests.get(url)
-            if res.statut_code == 200:
+            if res.status_code == 200:
                 data = res.json()
                 blocks = data.get("blocks", [])
                 print("Instruction reçue :", data)
@@ -27,7 +27,7 @@ class ClientAPI:
                 self.modifier_statut_instruction(ref_id, "current")
                 return blocks
             else:
-                print("Erreur récupération instruction - Code :", res.statut_code)
+                print("Erreur récupération instruction - Code :", res.status_code)
             res.close()
         except Exception as e:
             print("Erreur GET instruction :", e)
@@ -70,13 +70,13 @@ class ClientAPI:
         try:
             url = self.base_url + f"/message/{ref_id}"
             res = urequests.get(url)
-            if res.statut_code == 200:
+            if res.status_code == 200:
                 data = res.json()
                 messages = data.get("messages", [])
                 print("Messages reçus :", messages)
                 return messages
             else:
-                print("Erreur récupération messages - Code :", res.statut_code)
+                print("Erreur récupération messages - Code :", res.status_code)
             res.close()
         except Exception as e:
             print("Erreur GET messages :", e)

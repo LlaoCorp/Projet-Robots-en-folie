@@ -36,24 +36,25 @@ def se_retourner(side):
 def suivre_ligne(already_on):
     if capteur_gauche.value() != 0 and capteur_droite.value() != 0:
         mes_roues.stop()
-        time.sleep(0.5)
+        time.sleep(0.1)
         if already_on == False:
             carte_terrain.increase_pos()
         else:
             mes_roues.avancer()
-            time.sleep(0.2)
+            time.sleep(0.1)
         return True
     elif capteur_gauche.value() == 0 and capteur_droite.value() == 0:
         mes_roues.avancer()
+        time.sleep(0.1)
     elif capteur_gauche.value() == 0 and capteur_droite.value() != 0:
         mes_roues.stop()
         time.sleep(0.5)
-        mes_roues.gauche(500)
+        mes_roues.gauche(200)
         time.sleep(0.1)
     else:
         mes_roues.stop()
         time.sleep(0.5)
-        mes_roues.droite(500)
+        mes_roues.droite(200)
         time.sleep(0.1)
     return False
 

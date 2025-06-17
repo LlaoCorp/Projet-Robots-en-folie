@@ -9,6 +9,7 @@ already_on = False
 instruction_getted = False
 
 debug_mode = False
+mes_roues.stop()
 
 # Boucle pour la récupération d'instruction envoyé par le server
 while instruction_getted == False:
