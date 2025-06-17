@@ -1,8 +1,8 @@
-import time, hcsr04, roues, carte
+import time, hcsr04, roues, carte, builtins
 from machine import Pin, PWM
 
 # Définition des composants
-mes_roues = roues.Roues(14,27,26,25)    # Définition des roues
+mes_roues = roues.Roues(14,27,26,25,32,33) # Définition des roues
 capteur_gauche = Pin(15, Pin.IN)        # Définition du capteur de ligne gauche
 capteur_droite = Pin(4, Pin.IN)         # Définition du capteur de ligne droite
 servo = PWM(Pin(13), freq=50)           # Définition du servo moteur (pince)
@@ -15,12 +15,9 @@ carte_terrain = carte.Carte()           # Définition de la carte contenant le t
 ##
 def se_retourner(side):
     """
-    se_retourner does blah blah blah.
+    se_retourner permet au robot de se retourner pour retracer son chemin jusqu'au container précédent.
 
-    :param p1: describe about parameter p1
-    :param p2: describe about parameter p2
-    :param p3: describe about parameter p3
-    :return: describe what it returns
+    :param side: Le sense dans lequel le robot se trouve
     """ 
     count_lines = 0
     previous_val = 0
@@ -39,7 +36,7 @@ def se_retourner(side):
 def suivre_ligne(already_on):
     if capteur_gauche.value() != 0 and capteur_droite.value() != 0:
         mes_roues.stop()
-        time.sleep(0.2)
+        time.sleep(0.5)
         if already_on == False:
             carte_terrain.increase_pos()
         else:
@@ -50,13 +47,13 @@ def suivre_ligne(already_on):
         mes_roues.avancer()
     elif capteur_gauche.value() == 0 and capteur_droite.value() != 0:
         mes_roues.stop()
-        time.sleep(0.2)
-        mes_roues.gauche()
+        time.sleep(0.5)
+        mes_roues.gauche(500)
         time.sleep(0.1)
     else:
         mes_roues.stop()
-        time.sleep(0.2)
-        mes_roues.droite()
+        time.sleep(0.5)
+        mes_roues.droite(500)
         time.sleep(0.1)
     return False
 
@@ -77,19 +74,21 @@ def set_angle(angle):
 def attraper_cube():
     set_angle(180)
     time.sleep(3)
-    carte_terrain.set_status_pince(False)
+    carte_terrain.set_statut_pince(False)
 
 def lacher_cube():
     set_angle(90)
     time.sleep(3)
-    carte_terrain.set_status_pince(True)
+    carte_terrain.set_statut_pince(True)
 
 def cherche_cube():
     # Se cadrer
     mes_roues.reculer()
-    time.sleep(1)
+    time.sleep(0.5)
     mes_roues.droite()
-    time.sleep(1)
+    time.sleep(0.3)
+    mes_roues.stop()
+    lacher_cube()
 
     # Boucle pour ce mettre à la bonne distance du cube
     while int(distanceMesure()) > 2 or int(distanceMesure()) < 1:
@@ -99,13 +98,17 @@ def cherche_cube():
             mes_roues.reculer()
         else:
             break
-    attraper_cube()
+        time.sleep(0.1)
+        mes_roues.stop()
+
+    attraper_cube() # On attrape le cube une fois que l'on est bien aligné
     
     # Se remettre sur la ligne
-    mes_roues.gauche()
-    time.sleep(1)
     mes_roues.reculer()
-    time.sleep(1)
+    time.sleep(0.6)
+    mes_roues.gauche()
+    time.sleep(0.3)
+    mes_roues.stop()
     carte_terrain.set_objectif(carte_terrain.get_best_container())
 
 def cherche_container():
@@ -127,8 +130,9 @@ def cherche_container():
     mes_roues.gauche()
     time.sleep(1)
     mes_roues.stop()
+    attraper_cube()
     
-    if len(carte_terrain.get_objectif_list) > 0:
+    if builtins.len(carte_terrain.get_objectif_list) > 0:
         carte_terrain.delete_prev_objectif()
         carte_terrain.set_objectif(carte_terrain.get_objectif_list()[0])
     else:

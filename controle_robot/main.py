@@ -36,30 +36,33 @@ while True:
             apiConf.envoyer_telemetry(
                 get_adr_mac(),
                 distanceMesure(),
-                mes_roues.get_status_deplacement(),
+                mes_roues.get_statut_deplacement(),
                 (carte_terrain.get_pos_int() + 1),
-                carte_terrain.get_status_pince()
+                carte_terrain.get_statut_pince()
             )
             derniere_telemetry = time.time()
 
+        apiConf.envoyer_message(get_adr_mac(), carte_terrain.get_pos())
         if carte_terrain.get_objectif() != carte_terrain.get_pos():
             already_on = suivre_ligne(already_on)
         elif carte_terrain.get_pos()[0] == 'c':
             # carte_terrain.increase_pos()
-            print("cherche_cube")
+            apiConf.envoyer_message(get_adr_mac(), "cherche_cube")
             cherche_cube()
-            print("fin cherche_cube")
+            apiConf.envoyer_message(get_adr_mac(), "fin cherche_cube")
         elif carte_terrain.get_pos() != 'base':
-            print("cherche_container")
+            apiConf.envoyer_message(get_adr_mac(), "cherche_container")
             cherche_container()
-            print("fin cherche_container")
+            apiConf.envoyer_message(get_adr_mac(), "fin cherche_container")
         else:
             mes_roues.stop()
             telemetry_thread.stop()
             break
     except KeyboardInterrupt:
         mes_roues.stop()
-        print("Arrêt manuel")
+        apiConf.envoyer_message(get_adr_mac(), "Arrêt manuel")
+        if carte_terrain.get_statut_pince() == True :
+            attraper_cube()
         time.sleep(3)
 
 test = ''
