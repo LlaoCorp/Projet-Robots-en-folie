@@ -1,5 +1,4 @@
 import sqlite3
-import uuid
 
 def get_db():
     return sqlite3.connect("base.db")
@@ -73,12 +72,13 @@ def changer_status_instruction(robot_id: str, status: str):
     return updated > 0
 
 def enregistrer_telemetry(telemetry):
+    print(telemetry)
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("""
         INSERT INTO telemetry (robot_id, vitesse_instant, ds_ultrasons, status_deplacement, ligne, status_pince)
         VALUES (?, ?, ?, ?, ?, ?)
-    """, (telemetry.robot_id, telemetry.vitesse_instant, telemetry.ds_ultrasons, telemetry.status_deplacement, telemetry.ligne, int(telemetry.status_pince)))
+    """, (telemetry.robot_id, telemetry.vitesse_instant, telemetry.ds_ultrasons, telemetry.statut_deplacement, telemetry.ligne, telemetry.statut_pince))
     conn.commit()
     conn.close()
 
@@ -126,3 +126,18 @@ def recuperer_messages():
     cursor = conn.cursor()
     cursor.execute("SELECT ref_id, contenu FROM messages")
     return [{"ref_id": row[0], "contenu": row[1]} for row in cursor.fetchall()]
+
+def recuperer_temps_missions(robot_id: str):
+    conn = get_db()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("""
+            SELECT duree
+            FROM instructions
+            WHERE robot_id = ? AND duree IS NOT NULL
+            ORDER BY id ASC
+        """, (robot_id,))
+        rows = cursor.fetchall()
+        return [row[0] for row in rows if row[0] is not None]
+    finally:
+        conn.close()
