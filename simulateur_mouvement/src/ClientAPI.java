@@ -73,7 +73,7 @@ public class ClientAPI {
                 in.close();
 
                 JSONObject json = new JSONObject(content.toString());
-                JSONArray blocksArray = new JSONArray(json.getString("blocks"));
+                JSONArray blocksArray = json.getJSONArray("blocks");
 
                 ArrayList<Integer> cubes = new ArrayList<>();
                 for (int i = 0; i < blocksArray.length(); i++) {
@@ -105,9 +105,9 @@ public class ClientAPI {
         payload.put("robot_id", refId);
         payload.put("vitesse_instant", vitesse_instant);
         payload.put("ds_ultrasons", ds_ultrasons);
-        payload.put("status_deplacement", status_deplacement);
+        payload.put("statut_deplacement", status_deplacement);
         payload.put("ligne", ligne);
-        payload.put("status_pince", status_pince);
+        payload.put("statut_pince", status_pince);
         envoyer("/telemetry", payload.toString());
     }
 
