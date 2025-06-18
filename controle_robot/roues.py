@@ -16,7 +16,9 @@ class Roues:
         self.ENB = PWM(Pin(ENB_PIN), freq=freq)
 
         # Valeur par défaut de vitesse
-        self.vitesse_defaut = 600 # max = 1023
+        # self.vitesse_defaut_d = 800 # max = 1023
+        # self.vitesse_defaut_g = 700 # max = 1023
+        self.vitesse_defaut = 700 # max = 1023
 
         # État
         self.statut_deplacement = 'stop'
@@ -76,13 +78,20 @@ class Roues:
     def droite(self, vitesse=None):
         if vitesse is None:
             vitesse = self.vitesse_defaut
-        self.moteur_a(-50)
+        self.moteur_a(-1000)
         self.moteur_b(vitesse)
         self.statut_deplacement = 'droite'
+
+    def tour_droite(self, vitesse=None):
+        if vitesse is None:
+            vitesse = self.vitesse_defaut
+        self.moteur_a(-vitesse)
+        self.moteur_b(vitesse)
+        self.statut_deplacement = 'droite_toute'
 
     def gauche(self, vitesse=None):
         if vitesse is None:
             vitesse = self.vitesse_defaut
         self.moteur_a(vitesse)
-        self.moteur_b(-50)
+        self.moteur_b(-800)
         self.statut_deplacement = 'gauche'
