@@ -3,7 +3,7 @@
 ## 1. Contexte et Objectifs
 
 Ce projet d'intégration a pour objectif la conception et la réalisation d’un robot transporteur autonome capable de déplacer des cubes sur une aire de jeu définie.  
-Il permet d’appliquer les compétences techniques acquises dans différents domaines : mécanique, électronique, programmation embarquée, développement web et interface utilisateur.
+Il permet d’appliquer les compétences techniques au cours de l'année : mécanique, électronique, programmation embarquée et développement web.
 
 L’enjeu est de mener à bien un projet multidisciplinaire, de la conception à la démonstration finale, en travaillant en équipe, avec une gestion rigoureuse et un rendu professionnel.
 
@@ -11,7 +11,7 @@ L’enjeu est de mener à bien un projet multidisciplinaire, de la conception à
 
 ## 2. Équipe et Gestion de Projet
 
-- **Composition** : 3 élèves en collaboration.  
+- **Composition** : Alexandre Chabre, Hugo Ruiz--Passelande et Valentin Llao.
 - **Méthodologie** : Agile, avec réunions quotidiennes courtes.  
 - **Suivi** : Tableau de tâches partagé (Trello, GitHub et Google Drive).  
 - **Documentation** :  
@@ -20,10 +20,10 @@ L’enjeu est de mener à bien un projet multidisciplinaire, de la conception à
   - Diagrammes de Gantt.
   - Documentation technique (README, commentaires, Doxygen).  
 - **Jalons** :  
-  - Jalon 0 : Présentation projet (2 juin)  
-  - Jalon 1 : Modélisation (6 juin)  
-  - Jalon 2 : Version fonctionnelle 1 (12 juin)  
-  - Jalon 3 : Livraison finale (19 juin)  
+  - Jalon 0 : Présentation projet (2 juin)
+  - Jalon 1 : Modélisation (6 juin)
+  - Jalon 2 : Version fonctionnelle 1 (12 juin)
+  - Jalon 3 : Livraison finale (19 juin)
   - Jalon 4 : Soutenance orale (20 juin)
 
 ---
@@ -100,7 +100,7 @@ L’enjeu est de mener à bien un projet multidisciplinaire, de la conception à
 ### 5.3 Fabrication
 
 - Impression 3D des pièces plastiques.  
-- Découpe laser des supports métalliques ou bois.  
+- Découpe laser des supports en MDF.  
 - Assemblage et test mécanique.
 
 ---
@@ -109,32 +109,9 @@ L’enjeu est de mener à bien un projet multidisciplinaire, de la conception à
 
 ### 6.1 Configuration des pins
 
-    from machine import Pin, PWM
-    import time
+Utilisation de PWM et PIN dans micropython
 
-    # Moteurs
-    moteur_gauche = PWM(Pin(14), freq=1000)
-    moteur_droit = PWM(Pin(15), freq=1000)
-
-    # Servomoteur pince
-    pince_servo = PWM(Pin(13), freq=50)
-
-### 6.2 Fonctions pince
-
-    def ouvrir_pince():
-        pince_servo.duty(40)
-        time.sleep(1)
-
-    def fermer_pince():
-        pince_servo.duty(115)
-        time.sleep(1)
-
-### 6.3 Lecture capteurs
-```
-    capteur_ultrason = Pin(4, Pin.IN)
-    capteur_ligne = Pin(5, Pin.IN)
-```
-### 6.4 Communication WiFi et serveur MQTT
+### 6.2 Communication WiFi et serveur MQTT
 
 - Connexion au réseau WiFi.  
 - Publication / abonnement MQTT (ou sockets) pour échanges avec serveur.
@@ -148,7 +125,7 @@ L’enjeu est de mener à bien un projet multidisciplinaire, de la conception à
 - **Fichier principal** : main.py  
 - **Modules** :  
   - base.py (gestion SQLite)  
-  - api.py (routes FastAPI)  
+  - api/router.py (routes FastAPI)  
   - models.py (définition données)
 
 ### 7.2 Exemple route API
@@ -170,27 +147,11 @@ L’enjeu est de mener à bien un projet multidisciplinaire, de la conception à
 
 ## 8. Console de Contrôle (Tkinter)
 
-### 8.1 Interface simple
-
-- Fenêtre principale affichant :  
-  - État robot (position, batterie).  
-  - Boutons pour envoyer commandes (avancer, reculer, ouvrir pince).  
+- Fenêtre principale affichant : 
+  - Bouton et champ de texte permettant la connexion avec le robot voulu.
+  - État robot (position, état pince, actions, distance ultrasons).
+  - Boutons pour envoyer objectif (basée sur une logique commune à tout les groupes).  
   - Journaux des messages reçus.
-
-### 8.2 Exemple simplifié
-
-    import tkinter as tk
-
-    def avancer():
-        print("Commande avancer envoyée")
-
-    root = tk.Tk()
-    root.title("Console Contrôle Robot")
-
-    btn_avancer = tk.Button(root, text="Avancer", command=avancer)
-    btn_avancer.pack()
-
-    root.mainloop()
 
 ---
 
@@ -214,24 +175,26 @@ L’enjeu est de mener à bien un projet multidisciplinaire, de la conception à
 ## 11. Documentation et Présentation
 
 - Génération automatique avec Doxygen pour le code embarqué.  
-- Rapport écrit synthétisant le projet, organisation et défis.  
-- Vidéo démonstration de la solution finale.  
+- Auto-évaluation journalière.
+- Rapport journalier sur les exploits de la journée ainsi que les futures missions.
+- Diagramme de Gantt.
+- Vidéo démonstration de la solution finale.
 - Présentation orale de 15 minutes.
 
 ---
 
 ## 12. Problèmes connus et pistes d’amélioration
 
-- Gestion avancée des collisions.  
-- Optimisation énergie.  
-- Ajout de la reconnaissance visuelle (caméra).  
+- Latence entre le moment où l'on capte la ligne et le moment où l'on envoie l'instruction de tourner.  
+- Optimiser l'envoie d'énergie.  
+- Ajout d'une carroserie plus complète pour le robot.  
 - Interface web plus complète (statistiques graphiques).
 
 ---
 
 ## 13. Contacts et Ressources
 
-- Encadrants : Mme Dupont, M. Martin  
+- Référents : Mr. Madeline Blaise, Mr. Delcombel Pascal & Mme. Dolle-Fabre Cécile 
 - Documentation MicroPython : https://docs.micropython.org  
 - FastAPI : https://fastapi.tiangolo.com  
 - SQLite : https://sqlite.org/index.html
