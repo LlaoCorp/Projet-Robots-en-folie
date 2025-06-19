@@ -46,9 +46,6 @@ couleurs_blocs = {
     "Vert": 10
 }
 
-label_couleur = Label(frame_mission, text="Cubes à récupérer", font=("Segoe UI", 12), bg="#f3f4f6")
-label_couleur.grid(row=2, column=0, padx=5, pady=5)
-
 # Création des BooleanVar pour chaque couleur
 selections = {couleur: BooleanVar() for couleur in couleurs_blocs}
 
@@ -57,12 +54,23 @@ frame_mission.grid_columnconfigure(0, weight=1)
 frame_mission.grid_columnconfigure(1, weight=1)
 frame_mission.grid_columnconfigure(2, weight=1)
 
+ordre_blocs = []
+
+def ajouter_bloc(valeur, couleur):
+    ordre_blocs.append(valeur)
+    message_label.config(text=f"Bloc ajouté : {couleur} -> {ordre_blocs}", fg="blue")
+
 frame_couleurs = Frame(frame_mission, bg="#f3f4f6")
 frame_couleurs.grid(row=2, column=0, columnspan=4, pady=5)
 
-for i, (couleur, var) in enumerate(selections.items()):
-    check = Checkbutton(frame_couleurs, text=couleur, variable=var, bg="#f3f4f6", font=("Segoe UI", 12))
-    check.grid(row=0, column=i, padx=10)
+for i, (couleur, valeur) in enumerate(couleurs_blocs.items()):
+    bouton = ttk.Button(
+        frame_couleurs,
+        text=couleur,
+        style="SendText.TButton",
+        command=lambda v=valeur, c=couleur: ajouter_bloc(v, c)
+    )
+    bouton.grid(row=0, column=i, padx=10)
 
 message_label = Label(fenetre, text="", font=("Segoe UI", 12), bg="#f3f4f6", fg="#111827")
 message_label.pack(pady=10)
@@ -71,13 +79,25 @@ message_label.pack(pady=10)
 def bouton_envoyer_instruction():
     robot_id = entry_robot_id.get().strip()
     if robot_id:
-        blocs = [valeur for couleur, valeur in couleurs_blocs.items() if selections[couleur].get()]
-        if blocs:
-            envoyer_instruction(blocs, message_label, robot_id)
+        if ordre_blocs:
+            envoyer_instruction(ordre_blocs, message_label, robot_id)
+            ordre_blocs.clear()
         else:
             message_label.config(text="Aucun bloc sélectionné.", fg="red")
     else:
         message_label.config(text="Veuillez entrer un ID de robot.", fg="red")
+
+def reinitialiser_blocs():
+    ordre_blocs.clear()
+    message_label.config(text="Sélection de blocs réinitialisée.", fg="gray")
+
+btnReset = ttk.Button(
+    frame_mission,
+    text="Réinitialiser les blocs",
+    style="btnQuit.TButton",
+    command=reinitialiser_blocs
+)
+btnReset.grid(row=2, column=4, padx=10)
 
 # Création du bouton
 btnSendMission = ttk.Button(
@@ -129,6 +149,7 @@ btnQuit.pack(side="right", padx=10, pady=10)
 fenetre.bind("<Escape>", lambda e: fenetre.destroy())
 
 def boucle_rafraichissement():
+    print('ici')
     robot_id = entry_robot_id.get().strip()
     if instruction_en_cours(robot_id):
         boucle_active = True
@@ -138,5 +159,6 @@ def boucle_rafraichissement():
     else:
         boucle_active = False
         message_label.config(text="Aucune mission en cours pour ce robot", fg="red")
-    
+
+boucle_rafraichissement()
 fenetre.mainloop()

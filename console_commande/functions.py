@@ -5,6 +5,7 @@ API_HOST = "http://10.7.5.148:8000/"
 
 def envoyer_instruction(blocks: list[int], message_label, robot_id):
     try:
+        print(robot_id, blocks)
         payload = {
             "robot_id": robot_id,
             "blocks": blocks,
@@ -23,7 +24,7 @@ def envoyer_instruction(blocks: list[int], message_label, robot_id):
 
 def afficher_instruction(text_output=None, robot_id=None):
     try:
-        res = requests.get(f"{API_HOST}/instructions/{robot_id}")
+        res = requests.get(f"{API_HOST}/instructions?robot_id={robot_id}")
         if res.status_code == 200:
             data = res.json()
             if not data.get("success"):
