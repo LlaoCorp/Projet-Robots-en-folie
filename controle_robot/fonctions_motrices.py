@@ -1,4 +1,4 @@
-import time, hcsr04, roues, carte, builtins
+import time, hcsr04, roues, carte, builtins, api_config
 from machine import Pin, PWM
 
 # Définition des composants
@@ -8,6 +8,11 @@ capteur_droite = Pin(4, Pin.IN)         # Définition du capteur de ligne droite
 servo = PWM(Pin(13), freq=50)           # Définition du servo moteur (pince)
 carte_terrain = carte.Carte()           # Définition de la carte contenant le trajet du robot
 
+# Variables
+apiConf = api_config.ClientAPI('10.7.5.148')
+instruction_getted = False
+uuid = '72a1834d-98ef-4b46-87f5-5e4c4e82e39a'
+
 # Fonctions
 # ------------
 
@@ -16,7 +21,7 @@ carte_terrain = carte.Carte()           # Définition de la carte contenant le t
 def se_retourner(side):
     """! se_retourner permet au robot de se retourner pour retracer son chemin jusqu'au container précédent.
 
-    @param side Le sense dans lequel le robot se trouve
+    @param side Le sense dans lequel le robot doit se trouver
     """ 
     count_lines = 0
     print("tourne")
@@ -40,7 +45,10 @@ def suivre_ligne(already_on):
         mes_roues.stop()
         time.sleep(0.2)
         if already_on == False:
-            carte_terrain.increase_pos()
+            if carte_terrain.get_reversed() == False:
+                carte_terrain.increase_pos()
+            else:
+                carte_terrain.decrease_pos()
         else:
             mes_roues.avancer(1000)
             time.sleep(0.5)
@@ -132,11 +140,11 @@ def cherche_cube():
     mes_roues.stop()
     print("Sur la ligne")
     carte_terrain.set_objectif(carte_terrain.get_best_container())
+    if carte_terrain.get_objectif()[0] == 's':
+        se_retourner(True)
 
 def cherche_container():
     """! Permet de trouver un container, y poser le cube puis, revenir sur la ligne. """
-    # if carte_terrain.get_pos()[0] == 'e':
-
     # On previent
     mes_roues.stop()
     time.sleep(1)
@@ -168,3 +176,38 @@ def cherche_container():
         carte_terrain.set_objectif(carte_terrain.get_objectif_list()[0])
     else:
         carte_terrain.set_objectif('base')
+    
+    if carte_terrain.get_reversed() == True:
+        se_retourner(False)
+
+
+# FONCTIONS SERVER
+
+# 
+def send_telemetry(message=""):
+    """! Gestion de la télémetrie toutes les secondes
+
+    @param message Message qui s'enverra sur une route spécifique pour le debug
+    """
+    apiConf.envoyer_telemetry(
+        uuid,
+        distanceMesure(),
+        mes_roues.get_statut_deplacement(),
+        (carte_terrain.get_pos_int() + 1),
+        carte_terrain.get_statut_pince()
+    )
+    if message != "":
+        apiConf.envoyer_message(uuid, message)
+
+def get_instructions():
+    """! Boucle pour la récupération d'instructions envoyées par le server """
+    while instruction_getted == False:
+        time.sleep(1)
+        print('waiting for return...')
+        blocks = apiConf.recuperer_instruction(uuid)
+
+        if blocks is not None:
+            carte_terrain.set_objectif_by_int(blocks)
+            print(carte_terrain.get_objectif_list())
+            instruction_getted == True
+            break
