@@ -13,6 +13,18 @@ uuid = '72a1834d-98ef-4b46-87f5-5e4c4e82e39a'
 debug_mode = False
 mes_roues.stop()
 
+# Gestion de la télémetrie toutes les secondes
+def send_telemetry(message=""):
+    apiConf.envoyer_telemetry(
+        uuid,
+        distanceMesure(),
+        mes_roues.get_statut_deplacement(),
+        (carte_terrain.get_pos_int() + 1),
+        carte_terrain.get_statut_pince()
+    )
+    if message != "":
+        apiConf.envoyer_message(uuid, message)
+
 # Boucle pour la récupération d'instruction envoyé par le server
 while instruction_getted == False:
     if debug_mode == True:
@@ -29,17 +41,6 @@ while instruction_getted == False:
         break
 
 # derniere_telemetry = time.time()
-# Gestion de la télémetrie toutes les secondes
-def send_telemetry(message=""):
-    apiConf.envoyer_telemetry(
-        uuid,
-        distanceMesure(),
-        mes_roues.get_statut_deplacement(),
-        (carte_terrain.get_pos_int() + 1),
-        carte_terrain.get_statut_pince()
-    )
-    if message != "":
-        apiConf.envoyer_message(uuid, message)
 
 # Début de la boucle
 if debug_mode != True:

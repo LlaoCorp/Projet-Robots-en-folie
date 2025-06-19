@@ -32,6 +32,9 @@ def se_retourner(side):
             previous_val = 1
     print("retourné")
 
+# def verification_precise_ligne():
+#     if capteur_gauche.value() != 0: capteur_droite.value() != 0:
+
 def suivre_ligne(already_on, apiConf):
     """! Permet de suivre la ligne et de repèrer les checkpoints.
 
@@ -39,7 +42,8 @@ def suivre_ligne(already_on, apiConf):
     @return True, si le robot repère un "checkpoint", sinon False
     """ 
     if capteur_gauche.value() != 0 and capteur_droite.value() != 0:
-        # Faire une fonction pour le faire chercher le checkpoint même pdt qu'il tourne
+        global dernier_droit, dernier_gauche
+
         mes_roues.stop()
         time.sleep(0.2)
         if already_on == False:
@@ -56,22 +60,14 @@ def suivre_ligne(already_on, apiConf):
         print('capteur droite')
         mes_roues.stop()
         time.sleep(0.2)
-        # for i in range(4):
-        mes_roues.gauche(1000)
+        mes_roues.gauche(900)
         time.sleep(0.2)
-            # if capteur_gauche.value() != 0 and capteur_droite.value() != 0:
-            #     mes_roues.stop()
-            #     return False
-    else:
+    elif capteur_gauche.value() != 0 and capteur_droite.value() == 0:
         print('capteur gauche')
         mes_roues.stop()
         time.sleep(0.2)
-        # for i in range(4):
-        mes_roues.droite(1000)
+        mes_roues.droite(800)
         time.sleep(0.2)
-            # if capteur_gauche.value() != 0 and capteur_droite.value() != 0:
-            #     mes_roues.stop()
-            #     return False
     return False
 
 # FONCTIONS PRATIQUES
@@ -107,8 +103,8 @@ def lacher_cube():
 def cherche_cube():
     """! Permet de trouver le cube, le prendre puis, revenir sur la ligne. """
     # Se cadrer
-    mes_roues.reculer(1000)
-    time.sleep(0.5)
+    mes_roues.reculer(700)
+    time.sleep(0.6)
     print("fin recule")
 
     # Trouver le cube
@@ -116,14 +112,14 @@ def cherche_cube():
         mes_roues.gauche(800)
         time.sleep(0.1)
         mes_roues.stop()
-        time.sleep(0.05)
+        time.sleep(0.1)
     mes_roues.stop()
     lacher_cube() # On ouvre les pinces
     print("cube trouvé")
 
     # Boucle pour se mettre à la bonne distance du cube
     while int(distanceMesure()) > 2 or int(distanceMesure()) < 1:
-        if int(distanceMesure()) > 2:
+        if int(distanceMesure()) > 2 or int(distanceMesure()) < 0:
             mes_roues.avancer()
         elif int(distanceMesure()) < 1:
             mes_roues.reculer()
