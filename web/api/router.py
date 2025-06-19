@@ -136,7 +136,7 @@ async def list_missions(robot_id: str):
         return {"robot_id": robot_id, "instructions": instructions}
     return {"error": "Aucune instruction en cours pour ce robot."}
 
-@router.get("/instructions/{robot_id}")
+@router.get("/instructions")
 async def recuperer_instruction(robot_id: str):
     instruction = get_current_instruction(robot_id)
     if instruction:
