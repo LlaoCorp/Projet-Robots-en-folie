@@ -2,121 +2,205 @@
 
 ## 1. Contexte et Objectifs
 
-Ce projet d'intégration a pour objectif la conception et la réalisation d’un robot transporteur autonome capable de déplacer des cubes sur une aire de jeu définie.
-Il permet d’appliquer les compétences techniques au cours de l'année : mécanique, électronique, programmation embarquée et développement web.
+Ce projet d'intégration a pour objectif la conception et la réalisation d’un robot autonome capable de déplacer des cubes sur une aire de jeu définie. Il mobilise les compétences acquises tout au long de l’année : conception mécanique, électronique, programmation embarquée, développement web et gestion de projet.
 
-L’enjeu est de mener à bien un projet multidisciplinaire, de la conception à la démonstration finale, en travaillant en équipe, avec une gestion rigoureuse et un rendu professionnel.
+L’enjeu principal est de concevoir une solution fonctionnelle, modulaire et présentable, en équipe, avec une gestion rigoureuse et une démonstration finale professionnelle.
 
 ---
 
 ## 2. Équipe et Gestion de Projet
 
-* **Composition** : Alexandre Chabre, Hugo Ruiz--Passelande et Valentin Llao.
-* **Méthodologie** : Agile, avec réunions quotidiennes courtes.
-* **Suivi** : Tableau de tâches partagé (Trello, GitHub et Google Drive).
-* **Documentation** :
+* **Équipe** : Alexandre Chabre, Hugo Ruiz--Passelande, Valentin Llao.
+* **Méthodologie** : Approche agile (scrums quotidiens, rétrospectives régulières).
+* **Outils collaboratifs** : Trello, GitHub, Google Drive.
+* **Livrables documentaires** :
 
-  * Compte-rendus de réunions.
-  * Auto-évaluations
-  * Diagrammes de Gantt.
-  * Documentation technique (README, commentaires, Doxygen).
-* **Jalons** :
+  * Compte-rendus de réunions
+  * Auto-évaluations régulières
+  * Diagrammes de Gantt
+  * Documentation technique (README, commentaires, Doxygen)
+* **Jalons clés** :
 
-  * Jalon 0 : Spécifications, choix techniques.
-  * Jalon 1 : Architecture logicielle, prototypes.
-  * Jalon 2 : Intégration des modules et tests.
-  * Jalon 3 : Démonstration publique.
-
----
-
-## 3. Architecture du Projet
-
-Le projet est divisé en plusieurs modules interconnectés :
-
-* **Serveur FastAPI** : gère la base de données SQLite, les routes d'échange entre l'interface web, les robots, et l'API REST.
-* **Base de données** : stocke les instructions, télémétries, résumés de mission, et messages.
-* **Interface Web** : accessible dans `web/templates/index.html` pour créer un robot et consulter les missions.
-* **Code embarqué MicroPython** : le robot interagit avec le serveur, exécute les missions et renvoie des télémétries.
-
-> ⚠️ Le code MicroPython peut évoluer selon les composants matériels ou tests sur le robot.
+  * Jalon 0 : Présentation initiale du projet (2 juin)
+  * Jalon 1 : Modélisation et validation des choix techniques (6 juin)
+  * Jalon 2 : Première version fonctionnelle (12 juin)
+  * Jalon 3 : Livraison finale avec démonstration (19 juin)
+  * Jalon 4 : Soutenance orale (20 juin)
 
 ---
 
-## 4. Structure du Projet
+## 3. Cahier des Charges Fonctionnel
 
-```
-Projet-Robots-en-folie/
-├── database/
-│   ├── base_model.py            # Modèles de données Pydantic
-│   ├── init_db.py               # Création des tables SQLite
-│   └── service.py               # Fonctions d'accès à la base
-│
-├── web/
-│   ├── templates/
-│   │   └── index.html        # Interface web utilisateur
-│   └── static/
-│       └── styles.css           # Styles CSS de l'interface
-│
-├── routes/
-│   └── main.py                 # Routes FastAPI principales
-│
-├── micropython/                  # Code embarqué à flasher dans le robot
-├── base.db                      # Base de données SQLite (après initialisation)
-├── README.md
-└── main.py                   # Lancement du serveur FastAPI
-```
+### 3.1 Robot
+
+* Navigation autonome ou téléopérée sur surface plane
+* Identification, saisie et transport de cubes
+* Communication WiFi avec une console de contrôle
+* Envoi d’informations de position, état et mission
+
+### 3.2 Pince
+
+* Ouverture et fermeture via servomoteur
+* Préhension fiable des cubes
+* Résistance mécanique testée
+
+### 3.3 Logiciel embarqué
+
+* Lecture des capteurs (IR, ultrasons)
+* Contrôle des moteurs et de la pince
+* Communication bidirectionnelle avec le serveur (WiFi)
+* Implémentation en MicroPython (ESP32)
+
+### 3.4 Console de Contrôle
+
+* Interface Tkinter pour PC
+* Affichage en temps réel des données du robot
+* Envoi de missions personnalisées
+* Affichage des messages et alertes
+
+### 3.5 Console de Simulation
+
+* Interface Java Swing pour simuler les mouvements du robot
+* Visualisation graphique de la position et orientation
+* Interaction avec le serveur via API
+
+### 3.6 Serveur Web
+
+* API REST en FastAPI
+* Base de données SQLite
+* Interface web simple pour le suivi des missions
 
 ---
 
-## 5. Lancement rapide
+## 4. Matériel et Environnement
 
-### Prérequis
+* **Microcontrôleur** : ESP32
+* **Capteurs** : Capteurs de ligne IR, ultrasons
+* **Actionneurs** : Moteurs DC, servomoteur (pince)
+* **Outils logiciels** :
 
-* Python 3.10+
-* FastAPI
-* Uvicorn
+  * MicroPython (robot)
+  * Python 3.10+ (FastAPI, Tkinter)
+  * Java Swing (simulateur)
+  * CAO : SolidWorks / Fusion 360
+  * Fabrication : impression 3D, découpe laser
 
-### Installation des dépendances
+---
+
+## 5. Réalisation Mécanique
+
+### 5.1 Étude technique
+
+* Analyse de différentes mécaniques de pinces
+* Choix d’un modèle à pince parallèle motorisée
+
+### 5.2 CAO
+
+* Dimensions : 150x150x150 mm max
+* Conception des pièces via SolidWorks
+* Export en STL et DXF pour impression et découpe
+
+### 5.3 Fabrication
+
+* Impression 3D (PLA)
+* Découpe laser des supports MDF
+* Assemblage mécanique avec visserie
+
+---
+
+## 6. Programmation MicroPython (ESP32)
+
+### 6.1 Gestion des entrées/sorties
+
+* Utilisation des modules `machine.PWM` et `machine.Pin`
+* Mappage clair des broches (documentation Doxygen)
+
+### 6.2 Réseau et communication
+
+* Connexion WiFi automatique
+* Communication via MQTT ou sockets (selon versions)
+* Interaction avec le serveur FastAPI : missions, télémétries
+
+---
+
+## 7. Serveur Web (FastAPI)
+
+### 7.1 Architecture
+
+* **main.py** : point d’entrée de l’application
+* **database/** : gestion des modèles, base SQLite
+* **routes/** : endpoints de l’API (création robot, missions...)
+* **web/templates/** : interface web simple (HTML/CSS)
+
+### 7.2 Lancement rapide
 
 ```bash
 pip install fastapi uvicorn
-```
-
-### Initialisation de la base de données
-
-```bash
 python database/init_db.py
-```
-
-### Démarrage du serveur
-
-```bash
 uvicorn main:app --reload
 ```
 
-Puis accéder à l'interface web : [http://localhost:8000](http://localhost:8000)
+Accès à : [http://localhost:8000](http://localhost:8000)
+
+### 7.3 Exemple de route
+
+```python
+@app.get("/robots/{robot_id}")
+async def get_robot(robot_id: str):
+    return {"id": robot_id, "status": "active"}
+```
 
 ---
 
-## 6. Fonctionnalités clés
+## 8. Console de Contrôle (Tkinter)
 
-* Création dynamique de robots via formulaire.
-* Envoi et consultation des missions.
-* Récupération des télémétries robot en temps réel.
-* Mise à jour du statut des missions.
-* Architecture REST propre pour interfaçage robot/serveur.
-
----
-
-## 7. Améliorations possibles
-
-* Ajout d'une authentification JWT pour sécuriser l'interface.
-* Tableau de bord temps réel avec WebSocket.
-* Gestion des logs par robot.
-* Export CSV des données télémétriques.
+* Fenêtre principale avec champs d’identification
+* Envoi de blocs-missions en un clic
+* Suivi en direct de la télémétrie
+* Affichage des journaux d’exécution
 
 ---
 
-## 8. Remarques
+## 9. Console de Simulation (Java)
 
-Le projet est conçu pour être modulaire. Le code embarqué MicroPython peut être adapté en fonction de l'évolution du châssis, des capteurs, ou des stratégies de mission. Les interfaces et routes sont stables et adaptées à une communication fiable entre le robot et le serveur.
+* Simulation de la position du robot
+* Réception des missions via API
+* Visualisation graphique simple
+
+---
+
+## 10. Base de Données SQLite
+
+* **robots** : ID, nom, position, statut
+* **missions** : instructions, timestamps, robot\_id
+* **summary** : état final et durée
+* Historique des événements enregistrés
+
+---
+
+## 11. Documentation et Présentation
+
+* Documentation du code (Doxygen)
+* Journaux de suivi journalier
+* Diagrammes (Gantt, architecture)
+* Vidéo finale de démonstration
+* Soutenance orale (15 min)
+
+---
+
+## 12. Limites et pistes d’amélioration
+
+* Délai entre détection ligne et réaction moteur à optimiser
+* Amélioration de la consommation énergétique
+* Étendre le système à plusieurs robots simultanés
+* Interface web plus complète (dashboard en WebSocket)
+
+---
+
+## 13. Ressources utiles
+
+* **Référents pédagogiques** : M. Madeline, M. Delcombel, Mme. Dolle-Fabre
+* MicroPython : [https://docs.micropython.org](https://docs.micropython.org)
+* FastAPI : [https://fastapi.tiangolo.com](https://fastapi.tiangolo.com)
+* SQLite : [https://sqlite.org/index.html](https://sqlite.org/index.html)
+* ChatGPT : [https://chatgpt.com](https://chatgpt.com)
