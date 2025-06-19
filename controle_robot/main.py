@@ -25,7 +25,7 @@ def send_telemetry(message=""):
     if message != "":
         apiConf.envoyer_message(uuid, message)
 
-# Boucle pour la récupération d'instruction envoyé par le server
+# Boucle pour la récupération d'instructions envoyées par le server
 while instruction_getted == False:
     if debug_mode == True:
         break
@@ -33,14 +33,11 @@ while instruction_getted == False:
     print('waiting for return...')
     blocks = apiConf.recuperer_instruction(uuid)
 
-    # if blocks is not None and builtins.len(blocks) != 0:
     if blocks is not None:
         carte_terrain.set_objectif_by_int(blocks)
         print(carte_terrain.get_objectif_list())
         instruction_getted == True
         break
-
-# derniere_telemetry = time.time()
 
 # Début de la boucle
 if debug_mode != True:
@@ -66,22 +63,3 @@ if debug_mode != True:
             if carte_terrain.get_statut_pince() == True :
                 attraper_cube()
             time.sleep(3)
-
-test = ''
-while True:
-    if debug_mode == False:
-        break
-    test = input("quoi moi faire?")
-    if test == '0':
-        mes_roues.stop()
-        break
-    elif test == '1':
-        mes_roues.avancer()
-    elif test == '2':
-        mes_roues.stop()
-    elif test == '3':
-        lacher_cube()
-    elif test == '4':
-        attraper_cube()
-    elif test == '5':
-        mes_roues.reculer()
