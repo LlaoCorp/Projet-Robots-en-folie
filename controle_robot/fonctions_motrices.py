@@ -19,17 +19,15 @@ def se_retourner(side):
     @param side Le sense dans lequel le robot se trouve
     """ 
     count_lines = 0
-    previous_val = 0
     print("tourne")
     while side != carte_terrain.get_reversed():
-        mes_roues.droite()
+        mes_roues.droite(800)
         if count_lines == 2:
             carte_terrain.set_reversed(True)
-        if capteur_gauche.value() == 0 or capteur_droite.value() == 0 and previous_val == 1:
-            previous_val = 0
-            count_lines+=1
-        elif capteur_gauche.value() == 1 or capteur_droite.value() == 1:
-            previous_val = 1
+
+        if capteur_gauche.value() != 0:
+            count_lines += 1
+            time.sleep(0.3)
     print("retourné")
 
 def suivre_ligne(already_on, apiConf):
