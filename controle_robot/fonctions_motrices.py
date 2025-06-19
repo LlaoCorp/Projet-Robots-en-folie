@@ -30,7 +30,7 @@ def se_retourner(side):
             time.sleep(0.3)
     print("retourné")
 
-def suivre_ligne(already_on, apiConf):
+def suivre_ligne(already_on):
     """! Permet de suivre la ligne et de repèrer les checkpoints.
 
     @param already_on Boolean permettant de definir si le robot est toujours sur la ligne ou non. 
@@ -41,7 +41,6 @@ def suivre_ligne(already_on, apiConf):
         time.sleep(0.2)
         if already_on == False:
             carte_terrain.increase_pos()
-            apiConf.envoyer_message('72a1834d-98ef-4b46-87f5-5e4c4e82e39a', carte_terrain.get_pos())
         else:
             mes_roues.avancer(1000)
             time.sleep(0.5)

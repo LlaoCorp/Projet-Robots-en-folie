@@ -44,7 +44,7 @@ if debug_mode != True:
     while True:
         try:
             if carte_terrain.get_objectif() != carte_terrain.get_pos():
-                already_on = suivre_ligne(already_on, apiConf)
+                already_on = suivre_ligne(already_on)
             elif carte_terrain.get_pos()[0] == 'c':
                 send_telemetry("cherche_cube")
                 cherche_cube()
