@@ -26,9 +26,9 @@ def se_retourner(side):
     count_lines = 0
     print("tourne")
     while side != carte_terrain.get_reversed():
-        mes_roues.droite(800)
+        mes_roues.droite(650)
         if count_lines == 2:
-            carte_terrain.set_reversed(True)
+            carte_terrain.set_reversed(side)
 
         if capteur_gauche.value() != 0:
             count_lines += 1
