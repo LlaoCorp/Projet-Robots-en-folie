@@ -35,15 +35,15 @@ if debug_mode != True:
     while True:
         try:
             # Gestion de la télémetrie toutes les secondes
-            if time.time() - derniere_telemetry >= 1:
-                apiConf.envoyer_telemetry(
-                    uuid,
-                    distanceMesure(),
-                    mes_roues.get_statut_deplacement(),
-                    (carte_terrain.get_pos_int() + 1),
-                    carte_terrain.get_statut_pince()
-                )
-                derniere_telemetry = time.time()
+            # if time.time() - derniere_telemetry >= 1:
+            #     apiConf.envoyer_telemetry(
+            #         uuid,
+            #         distanceMesure(),
+            #         mes_roues.get_statut_deplacement(),
+            #         (carte_terrain.get_pos_int() + 1),
+            #         carte_terrain.get_statut_pince()
+            #     )
+            #     derniere_telemetry = time.time()
 
             if carte_terrain.get_objectif() != carte_terrain.get_pos():
                 already_on = suivre_ligne(already_on, apiConf)

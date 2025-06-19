@@ -56,14 +56,22 @@ def suivre_ligne(already_on, apiConf):
         print('capteur droite')
         mes_roues.stop()
         time.sleep(0.2)
-        mes_roues.gauche(1000)
-        time.sleep(0.2)
+        for i in range(4)
+            mes_roues.gauche(1000)
+            time.sleep(0.05)
+            if capteur_gauche.value() != 0 and capteur_droite.value() != 0:
+                mes_roues.stop()
+                return False
     else:
         print('capteur gauche')
         mes_roues.stop()
         time.sleep(0.2)
-        mes_roues.droite(1000)
-        time.sleep(0.2)
+        for i in range(4)
+            mes_roues.droite(1000)
+            time.sleep(0.05)
+            if capteur_gauche.value() != 0 and capteur_droite.value() != 0:
+                mes_roues.stop()
+                return False
     return False
 
 # FONCTIONS PRATIQUES
@@ -77,7 +85,7 @@ def distanceMesure():
     return distance
 
 def set_angle(angle):
-    # Convertit un angle (°) en rapport cyclique (duty)
+    """! Permet de convertir un angle (°) en rapport cyclique (duty). """
     min_duty = 26  # correspond à ~0.5ms -> 0°
     max_duty = 128  # correspond à ~2.5ms -> 180°
     duty = int(min_duty + (angle / 180) * (max_duty - min_duty)) # Calcul inspiré de ChatGPT
@@ -85,21 +93,24 @@ def set_angle(angle):
 
 # FONCTIONS DU CUBE
 def attraper_cube():
+    """! Permet de refermer la pince. """
     set_angle(180)
     time.sleep(3)
     carte_terrain.set_statut_pince(False)
 
 def lacher_cube():
+    """! Permet d'ouvrir la pince. """
     set_angle(90)
     time.sleep(3)
     carte_terrain.set_statut_pince(True)
 
 def cherche_cube():
+    """! Permet de trouver le cube, le prendre puis, revenir sur la ligne. """
     # Se cadrer
-    mes_roues.reculer()
+    mes_roues.reculer(1000)
+    time.sleep(0.4)
+    mes_roues.gauche(900)
     time.sleep(0.5)
-    mes_roues.tour_droite(600)
-    time.sleep(0.3)
     mes_roues.stop()
     lacher_cube() # On ouvre les pinces
 
@@ -117,37 +128,46 @@ def cherche_cube():
     attraper_cube() # On attrape le cube une fois que l'on est bien aligné
     
     # Se remettre sur la ligne
-    mes_roues.reculer()
-    time.sleep(0.6)
-    mes_roues.gauche()
-    time.sleep(0.3)
+    while capteur_gauche.value() != 0 or capteur_droite.value() != 0:
+        mes_roues.reculer(800)
+        time.sleep(0.1)
+    mes_roues.droite(800)
+    time.sleep(0.4)
     mes_roues.stop()
     carte_terrain.set_objectif(carte_terrain.get_best_container())
 
 def cherche_container():
+    """! Permet de trouver un container, y poser le cube puis, revenir sur la ligne. """
     # if carte_terrain.get_pos()[0] == 'e':
+
+    # On previent
+    mes_roues.stop()
+    time.sleep(1)
 
     # On centre
     mes_roues.avancer()
-    time.sleep(1.5)
+    time.sleep(1)
+
     # On va dans la zone
-    mes_roues.droite()
-    time.sleep(1)
-    mes_roues.avancer()
-    time.sleep(1)
+    mes_roues.gauche(900)
+    time.sleep(0.5)
+    mes_roues.avancer(1000)
+    time.sleep(0.5)
     mes_roues.stop()
     lacher_cube()
+
     # On reviens sur la ligne
-    mes_roues.reculer()
-    time.sleep(1)
-    mes_roues.gauche()
-    time.sleep(1)
+    while capteur_gauche.value() != 0 or capteur_droite.value() != 0:
+        mes_roues.reculer(800)
+        time.sleep(0.1)
+    mes_roues.droite(900)
+    time.sleep(0.3)
     mes_roues.stop()
     attraper_cube()
-    
+
+    # On mets les objectifs à jour
+    carte_terrain.delete_prev_objectif()
     if len(carte_terrain.get_objectif_list()) > 0:
-        carte_terrain.delete_prev_objectif()
-        print(carte_terrain.get_objectif_list())
         carte_terrain.set_objectif(carte_terrain.get_objectif_list()[0])
     else:
         carte_terrain.set_objectif('base')
