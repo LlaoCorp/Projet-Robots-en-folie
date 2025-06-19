@@ -1,9 +1,30 @@
+##
+# @file init_db.py
+# @brief Initialise la base de données SQLite avec toutes les tables nécessaires au simulateur de robot.
+#
+# Ce fichier contient une seule fonction `init_db()` qui crée les tables si elles n'existent pas :
+# - ref : robots enregistrés
+# - messages : messages textuels associés à un robot
+# - instructions : missions assignées aux robots
+# - telemetry : données de télémétrie envoyées par les robots
+# - summary : résumés de missions complétées
+
 import sqlite3
 
+##
+# @brief Initialise la base de données SQLite avec les tables nécessaires au bon fonctionnement de l'API.
+#
+# Crée les tables :
+# - `ref` : contient les robots
+# - `messages` : messages associés à chaque robot
+# - `instructions` : missions (blocs à récupérer) assignées
+# - `telemetry` : données de capteurs en temps réel
+# - `summary` : fin de mission
 def init_db():
     conn = sqlite3.connect("base.db", check_same_thread=False)
     curseur = conn.cursor()
 
+    # Table des robots (références)
     curseur.execute("""
     CREATE TABLE IF NOT EXISTS ref (
         id TEXT PRIMARY KEY,
@@ -11,6 +32,7 @@ def init_db():
     );
     """)
 
+    # Table des messages associés à un robot
     curseur.execute("""
     CREATE TABLE IF NOT EXISTS messages (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -20,6 +42,7 @@ def init_db():
     );
     """)
 
+    # Table des instructions données à un robot
     curseur.execute("""
     CREATE TABLE IF NOT EXISTS instructions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -31,6 +54,7 @@ def init_db():
     );
     """)
 
+    # Table des données de télémétrie (capteurs) du robot
     curseur.execute("""
     CREATE TABLE IF NOT EXISTS telemetry (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -45,6 +69,7 @@ def init_db():
     );
     """)
 
+    # Table des résumés de mission envoyés par le robot
     curseur.execute("""
     CREATE TABLE IF NOT EXISTS summary (
         id INTEGER PRIMARY KEY AUTOINCREMENT,

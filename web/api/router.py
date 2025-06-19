@@ -1,3 +1,7 @@
+## @file router.py
+#  @brief Définition des routes de l’API REST pour le simulateur de robot.
+#  Gère les requêtes entrantes (création de robot, instructions, télémétrie, messages...).
+
 import sys
 import os
 import ast
@@ -11,6 +15,8 @@ from database.base_model import Instruction, Initialisation, Telemetry, Summary,
 
 router = APIRouter()
 
+## @brief Page d’accueil HTML du serveur avec formulaires de test.
+#  @return HTML avec interface utilisateur.
 @router.get("/", response_class=HTMLResponse)
 async def root():
     html_content = """
@@ -47,6 +53,10 @@ async def root():
     """
     return HTMLResponse(content=html_content)
 
+## @brief Création d’un nouveau robot dans la base de données via formulaire HTML.
+#  @param name Nom du robot.
+#  @param id Identifiant unique du robot.
+#  @return HTML confirmant la création ou l’échec.
 @router.post("/create", response_class=HTMLResponse)
 async def create(name: str = Form(...), id: str = Form(...)):
     success = create_robot(id, name)
@@ -69,6 +79,9 @@ async def create(name: str = Form(...), id: str = Form(...)):
     """
     return HTMLResponse(content=html)
 
+## @brief Affiche les instructions (missions) d’un robot spécifique.
+#  @param robot_id ID du robot ciblé.
+#  @return HTML avec la liste des missions ou message d’erreur.
 @router.get("/missions", response_class=HTMLResponse)
 async def consulter_missions(robot_id: str = Query(...)):
     instructions = get_instructions(robot_id)
@@ -104,12 +117,17 @@ async def consulter_missions(robot_id: str = Query(...)):
     """
     return HTMLResponse(content=html)
 
-
+## @brief Reçoit des données de télémétrie pour un robot.
+#  @param telemetry Objet contenant les données de télémétrie.
+#  @return Statut de réception.
 @router.post("/telemetry")
 async def telemetry(telemetry: Telemetry):
     enregistrer_telemetry(telemetry)
-    return {"status": "télémetrie reçue"}
+    return {"status": "télémétrie reçue"}
 
+## @brief Récupère les dernières données de télémétrie pour un robot.
+#  @param robot_id Identifiant du robot.
+#  @return Données télémétriques ou message d’erreur.
 @router.get("/telemetry/{robot_id}")
 async def get_telemetry(robot_id: str):
     telemetry = recuperer_telemetry(robot_id)
@@ -117,11 +135,17 @@ async def get_telemetry(robot_id: str):
         return telemetry
     return {"error": "Aucune télémétrie trouvée pour ce robot."}
 
+## @brief Reçoit le résumé d'une mission.
+#  @param summary Objet contenant le résumé de mission.
+#  @return Statut de réception.
 @router.post("/summary")
 async def summary(summary: Summary):
     enregistrer_summary(summary)
     return {"status": "résumé reçu"}
 
+## @brief Enregistre une nouvelle instruction pour un robot.
+#  @param instruction Objet instruction contenant les blocs et le statut.
+#  @return Statut de l'opération.
 @router.post("/instructions")
 async def recevoir_instruction(instruction: Instruction):
     success = enregistrer_instruction(instruction.robot_id, instruction.blocks, instruction.status)
@@ -129,6 +153,9 @@ async def recevoir_instruction(instruction: Instruction):
         return {"status": "Instruction enregistrée"}
     return {"status": "Robot non trouvé"}
 
+## @brief Liste toutes les instructions d'un robot.
+#  @param robot_id Identifiant du robot.
+#  @return Liste d'instructions.
 @router.get("/list-instructions/{robot_id}")
 async def list_missions(robot_id: str):
     instructions = get_instructions(robot_id)
@@ -136,6 +163,9 @@ async def list_missions(robot_id: str):
         return {"robot_id": robot_id, "instructions": instructions}
     return {"error": "Aucune instruction en cours pour ce robot."}
 
+## @brief Récupère la dernière instruction en cours d'un robot.
+#  @param robot_id Identifiant du robot.
+#  @return Blocs de l'instruction en cours.
 @router.get("/instructions")
 async def recuperer_instruction(robot_id: str):
     instruction = get_current_instruction(robot_id)
@@ -143,6 +173,10 @@ async def recuperer_instruction(robot_id: str):
         return {"success": True, "blocks": ast.literal_eval(instruction["blocks"])}
     return {"success": False, "message": "Aucune instruction en cours pour ce robot."}
 
+## @brief Change le statut de la dernière instruction d'un robot.
+#  @param robot_id Identifiant du robot.
+#  @param request Corps de la requête contenant le nouveau statut.
+#  @return Statut de l'opération.
 @router.post("/instructions/change_status/{robot_id}")
 async def changer_status_instruction_route(robot_id: str, request: Request):
     payload = await request.json()
@@ -151,12 +185,16 @@ async def changer_status_instruction_route(robot_id: str, request: Request):
         return {"status": "Statut changé avec succès"}
     return {"status": "Erreur lors du changement de status"}
 
+##
+# @brief Reçoit un message pour un robot (utilisé pour les tests uniquement).
 @router.post("/message")
 async def message(request: Request):
     payload = await request.json()
     ajouter_message(payload['robot_id'], payload['message'])
     return {"status": "Message reçu avec succès"}
 
+##
+# @brief Récupère tous les messages enregistrés (utilisé pour les tests).
 @router.get("/messages")
 async def get_message():
     messages = recuperer_messages()
@@ -164,6 +202,9 @@ async def get_message():
         return {"messages": messages}
     return {"error": "Aucun message trouvé pour ce robot."}
 
+## @brief Récupère les temps de mission d’un robot.
+#  @param robot_id Identifiant du robot.
+#  @return Liste de durées ou message d’erreur.
 @router.get("/stats/{robot_id}")
 async def get_stats(robot_id: str):
     temps_missions = recuperer_temps_missions(robot_id)
