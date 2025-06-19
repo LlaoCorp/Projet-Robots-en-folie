@@ -16,8 +16,7 @@ uuid = '72a1834d-98ef-4b46-87f5-5e4c4e82e39a'
 # Fonctions
 # ------------
 
-# MOUVEMENTS
-##
+# MOUVEMENTS DU ROBOT
 def se_retourner(side):
     """! se_retourner permet au robot de se retourner pour retracer son chemin jusqu'au container précédent.
 
@@ -70,7 +69,7 @@ def suivre_ligne(already_on):
         time.sleep(0.2)
     return False
 
-# FONCTIONS PRATIQUES
+# FONCTIONS MATHEMATIQUES
 def distanceMesure():
     """! Permet de suivre la ligne et de repèrer les checkpoints.
  
@@ -182,8 +181,6 @@ def cherche_container():
 
 
 # FONCTIONS SERVER
-
-# 
 def send_telemetry(message=""):
     """! Gestion de la télémetrie toutes les secondes
 
