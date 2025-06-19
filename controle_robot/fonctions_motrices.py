@@ -1,4 +1,4 @@
-import time, hcsr04, roues, carte, builtins
+import time, hcsr04, roues, carte, builtins, api_config
 from machine import Pin, PWM
 
 # Définition des composants
@@ -8,6 +8,11 @@ capteur_droite = Pin(4, Pin.IN)         # Définition du capteur de ligne droite
 servo = PWM(Pin(13), freq=50)           # Définition du servo moteur (pince)
 carte_terrain = carte.Carte()           # Définition de la carte contenant le trajet du robot
 
+# Variables
+apiConf = api_config.ClientAPI('10.7.5.148')
+instruction_getted = False
+uuid = '72a1834d-98ef-4b46-87f5-5e4c4e82e39a'
+
 # Fonctions
 # ------------
 
@@ -16,35 +21,34 @@ carte_terrain = carte.Carte()           # Définition de la carte contenant le t
 def se_retourner(side):
     """! se_retourner permet au robot de se retourner pour retracer son chemin jusqu'au container précédent.
 
-    @param side Le sense dans lequel le robot se trouve
+    @param side Le sense dans lequel le robot doit se trouver
     """ 
     count_lines = 0
-    previous_val = 0
     print("tourne")
     while side != carte_terrain.get_reversed():
-        mes_roues.droite()
+        mes_roues.droite(650)
         if count_lines == 2:
-            carte_terrain.set_reversed(True)
-        if capteur_gauche.value() == 0 or capteur_droite.value() == 0 and previous_val == 1:
-            previous_val = 0
-            count_lines+=1
-        elif capteur_gauche.value() == 1 or capteur_droite.value() == 1:
-            previous_val = 1
+            carte_terrain.set_reversed(side)
+
+        if capteur_gauche.value() != 0:
+            count_lines += 1
+            time.sleep(0.3)
     print("retourné")
 
-def suivre_ligne(already_on, apiConf):
+def suivre_ligne(already_on):
     """! Permet de suivre la ligne et de repèrer les checkpoints.
 
     @param already_on Boolean permettant de definir si le robot est toujours sur la ligne ou non. 
     @return True, si le robot repère un "checkpoint", sinon False
     """ 
     if capteur_gauche.value() != 0 and capteur_droite.value() != 0:
-        # Faire une fonction pour le faire chercher le checkpoint même pdt qu'il tourne
         mes_roues.stop()
         time.sleep(0.2)
         if already_on == False:
-            carte_terrain.increase_pos()
-            apiConf.envoyer_message('72a1834d-98ef-4b46-87f5-5e4c4e82e39a', carte_terrain.get_pos())
+            if carte_terrain.get_reversed() == False:
+                carte_terrain.increase_pos()
+            else:
+                carte_terrain.decrease_pos()
         else:
             mes_roues.avancer(1000)
             time.sleep(0.5)
@@ -56,13 +60,13 @@ def suivre_ligne(already_on, apiConf):
         print('capteur droite')
         mes_roues.stop()
         time.sleep(0.2)
-        mes_roues.gauche(1000)
+        mes_roues.gauche(900)
         time.sleep(0.2)
-    else:
+    elif capteur_gauche.value() != 0 and capteur_droite.value() == 0:
         print('capteur gauche')
         mes_roues.stop()
         time.sleep(0.2)
-        mes_roues.droite(1000)
+        mes_roues.droite(800)
         time.sleep(0.2)
     return False
 
@@ -77,7 +81,7 @@ def distanceMesure():
     return distance
 
 def set_angle(angle):
-    # Convertit un angle (°) en rapport cyclique (duty)
+    """! Permet de convertir un angle (°) en rapport cyclique (duty). """
     min_duty = 26  # correspond à ~0.5ms -> 0°
     max_duty = 128  # correspond à ~2.5ms -> 180°
     duty = int(min_duty + (angle / 180) * (max_duty - min_duty)) # Calcul inspiré de ChatGPT
@@ -85,27 +89,37 @@ def set_angle(angle):
 
 # FONCTIONS DU CUBE
 def attraper_cube():
+    """! Permet de refermer la pince. """
     set_angle(180)
     time.sleep(3)
     carte_terrain.set_statut_pince(False)
 
 def lacher_cube():
+    """! Permet d'ouvrir la pince. """
     set_angle(90)
     time.sleep(3)
     carte_terrain.set_statut_pince(True)
 
 def cherche_cube():
+    """! Permet de trouver le cube, le prendre puis, revenir sur la ligne. """
     # Se cadrer
-    mes_roues.reculer()
-    time.sleep(0.5)
-    mes_roues.tour_droite(600)
-    time.sleep(0.3)
+    mes_roues.reculer(700)
+    time.sleep(0.6)
+    print("fin recule")
+
+    # Trouver le cube
+    while int(distanceMesure()) > 20 or int(distanceMesure()) < 1:
+        mes_roues.gauche(800)
+        time.sleep(0.1)
+        mes_roues.stop()
+        time.sleep(0.1)
     mes_roues.stop()
     lacher_cube() # On ouvre les pinces
+    print("cube trouvé")
 
-    # Boucle pour ce mettre à la bonne distance du cube
+    # Boucle pour se mettre à la bonne distance du cube
     while int(distanceMesure()) > 2 or int(distanceMesure()) < 1:
-        if int(distanceMesure()) > 2:
+        if int(distanceMesure()) > 2 or int(distanceMesure()) < 0:
             mes_roues.avancer()
         elif int(distanceMesure()) < 1:
             mes_roues.reculer()
@@ -113,41 +127,87 @@ def cherche_cube():
             break
         time.sleep(0.1)
         mes_roues.stop()
+    print("sur le cube")
 
     attraper_cube() # On attrape le cube une fois que l'on est bien aligné
     
     # Se remettre sur la ligne
-    mes_roues.reculer()
-    time.sleep(0.6)
-    mes_roues.gauche()
-    time.sleep(0.3)
+    while capteur_droite.value() != 0:
+        mes_roues.reculer(800)
+        time.sleep(0.1)
+    mes_roues.droite(800)
+    time.sleep(0.5)
     mes_roues.stop()
+    print("Sur la ligne")
     carte_terrain.set_objectif(carte_terrain.get_best_container())
+    if carte_terrain.get_objectif()[0] == 's':
+        se_retourner(True)
 
 def cherche_container():
-    # if carte_terrain.get_pos()[0] == 'e':
+    """! Permet de trouver un container, y poser le cube puis, revenir sur la ligne. """
+    # On previent
+    mes_roues.stop()
+    time.sleep(1)
 
     # On centre
     mes_roues.avancer()
-    time.sleep(1.5)
+    time.sleep(1)
+
     # On va dans la zone
-    mes_roues.droite()
-    time.sleep(1)
-    mes_roues.avancer()
-    time.sleep(1)
+    mes_roues.gauche(1000)
+    time.sleep(0.7)
+    mes_roues.avancer(1000)
+    time.sleep(0.5)
     mes_roues.stop()
     lacher_cube()
+
     # On reviens sur la ligne
-    mes_roues.reculer()
-    time.sleep(1)
-    mes_roues.gauche()
-    time.sleep(1)
+    while capteur_droite.value() != 0:
+        mes_roues.reculer(800)
+        time.sleep(0.1)
+    mes_roues.droite(800)
+    time.sleep(0.5)
     mes_roues.stop()
     attraper_cube()
-    
+
+    # On mets les objectifs à jour
+    carte_terrain.delete_prev_objectif()
     if len(carte_terrain.get_objectif_list()) > 0:
-        carte_terrain.delete_prev_objectif()
-        print(carte_terrain.get_objectif_list())
         carte_terrain.set_objectif(carte_terrain.get_objectif_list()[0])
     else:
         carte_terrain.set_objectif('base')
+    
+    if carte_terrain.get_reversed() == True:
+        se_retourner(False)
+
+
+# FONCTIONS SERVER
+
+# 
+def send_telemetry(message=""):
+    """! Gestion de la télémetrie toutes les secondes
+
+    @param message Message qui s'enverra sur une route spécifique pour le debug
+    """
+    apiConf.envoyer_telemetry(
+        uuid,
+        distanceMesure(),
+        mes_roues.get_statut_deplacement(),
+        (carte_terrain.get_pos_int() + 1),
+        carte_terrain.get_statut_pince()
+    )
+    if message != "":
+        apiConf.envoyer_message(uuid, message)
+
+def get_instructions():
+    """! Boucle pour la récupération d'instructions envoyées par le server """
+    while instruction_getted == False:
+        time.sleep(1)
+        print('waiting for return...')
+        blocks = apiConf.recuperer_instruction(uuid)
+
+        if blocks is not None:
+            carte_terrain.set_objectif_by_int(blocks)
+            print(carte_terrain.get_objectif_list())
+            instruction_getted == True
+            break

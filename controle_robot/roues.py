@@ -16,9 +16,7 @@ class Roues:
         self.ENB = PWM(Pin(ENB_PIN), freq=freq)
 
         # Valeur par défaut de vitesse
-        # self.vitesse_defaut_d = 800 # max = 1023
-        # self.vitesse_defaut_g = 700 # max = 1023
-        self.vitesse_defaut = 700 # max = 1023
+        self.vitesse_defaut = 600 # max = 1023
 
         # État
         self.statut_deplacement = 'stop'

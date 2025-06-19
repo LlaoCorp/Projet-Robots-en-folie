@@ -91,4 +91,5 @@ class Carte:
             self.pos = self.liste_zones[len(self.liste_zones) - 1]
         else:
             self.pos = self.liste_zones[pos_int - 1]
+        print(self.pos, pos_int)
 
