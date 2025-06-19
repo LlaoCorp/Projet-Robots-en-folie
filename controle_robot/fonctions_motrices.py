@@ -32,9 +32,6 @@ def se_retourner(side):
             previous_val = 1
     print("retourné")
 
-# def verification_precise_ligne():
-#     if capteur_gauche.value() != 0: capteur_droite.value() != 0:
-
 def suivre_ligne(already_on, apiConf):
     """! Permet de suivre la ligne et de repèrer les checkpoints.
 
@@ -42,8 +39,6 @@ def suivre_ligne(already_on, apiConf):
     @return True, si le robot repère un "checkpoint", sinon False
     """ 
     if capteur_gauche.value() != 0 and capteur_droite.value() != 0:
-        global dernier_droit, dernier_gauche
-
         mes_roues.stop()
         time.sleep(0.2)
         if already_on == False:

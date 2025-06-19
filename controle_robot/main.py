@@ -46,10 +46,6 @@ while instruction_getted == False:
 if debug_mode != True:
     while True:
         try:
-            # if time.time() - derniere_telemetry >= 1:
-            #     send_telemetry()
-            #     derniere_telemetry = time.time()
-
             if carte_terrain.get_objectif() != carte_terrain.get_pos():
                 already_on = suivre_ligne(already_on, apiConf)
             elif carte_terrain.get_pos()[0] == 'c':
