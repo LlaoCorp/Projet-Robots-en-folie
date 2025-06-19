@@ -64,7 +64,7 @@ def changer_status_instruction(robot_id: str, status: str):
         UPDATE instructions
         SET status = ?
         WHERE robot_id = ?
-        AND id = (SELECT id FROM instructions WHERE robot_id = ? ORDER BY id DESC LIMIT 1)
+        AND id = (SELECT id FROM instructions WHERE robot_id = ? AND status ='new' ORDER BY id DESC LIMIT 1)
     """, (status, robot_id, robot_id))
     conn.commit()
     updated = cursor.rowcount

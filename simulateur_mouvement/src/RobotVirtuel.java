@@ -2,6 +2,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.swing.*;
+import java.util.ArrayList;
 
 public class RobotVirtuel {
 
@@ -9,8 +10,8 @@ public class RobotVirtuel {
     private ClientAPI api = new ClientAPI();
     private Instruction instruction = null;
     private Boolean hasBox = false;
-    private int position = 0;
-    private int[] zonesDepot = {3, 6};
+    private int position = 1;
+    private int[] zonesDepot = {4,5,8,9};
     private SimulateurJava simulateur;
 
     public void avancer(int positionCible) {
@@ -28,31 +29,7 @@ public class RobotVirtuel {
         boolean pinceActive = hasBox;
 
         api.envoyerTelemetry(refId, vitesse, distanceUltrasons, statusDeplacement, ligne, pinceActive);
-
-        String objectif = hasBox ? "Déposer un cube" : "Chercher un cube";
     }
-
-    public int getPosition() {
-        return this.position;
-    }
-
-    public int getPositionFromCube(String cubeName) {
-        switch (cubeName) {
-            case "Cube 1":
-                return 1;
-            case "Cube 2":
-                return 2;
-            case "Cube 3":
-                return 4;
-            case "Cube 4":
-                return 5;
-            case "Cube 5":
-                return 7;
-            default:
-                return 0;
-        }
-    }
-
 
     public void prendreCube() {
         hasBox = true;
@@ -63,7 +40,6 @@ public class RobotVirtuel {
     public void deposerCube() {
         hasBox = false;
         log("Dépose cube en zone " + position);
-        api.envoyerSummary(refId);
         System.out.println("Cube déposé en position " + position);
     }
 
@@ -95,6 +71,8 @@ public class RobotVirtuel {
 
     public void deplacerVers(int cible, ZonePanel panel) throws InterruptedException {
         while (position != cible) {
+            System.out.println(position);
+            System.out.println(cible);
             avancer(cible);
             panel.setPositionRobot(position);
             Thread.sleep(600);
@@ -103,21 +81,25 @@ public class RobotVirtuel {
 
     public void executerInstruction(ZonePanel panel) throws InterruptedException {
         instruction = api.recupererInstruction(refId);
-        if (instruction == null || instruction.getNumCube() == null || instruction.getNumCube().isEmpty()) {
+        ArrayList<Integer> blocks = instruction.getNumCube();
+        System.out.println(blocks);
+        if (instruction == null || blocks == null || blocks.isEmpty()) {
             System.out.println("Aucune instruction trouvée.");
             return;
         }
 
-        int numeroCube = instruction.getNumCube().get(0);
-        String nomCube = "Cube " + numeroCube;
-        int cible = getPositionFromCube(nomCube);
+        for (int i = 0; i < blocks.size(); i++) {
+            System.out.println(blocks.get(i));
+            int cible = instruction.getNumCube().get(i);
 
-        deplacerVers(cible, panel);
-        prendreCube();
+            deplacerVers(cible, panel);
+            prendreCube();
 
-        int zoneDepot = getZoneDepotPlusProche();
-        deplacerVers(zoneDepot, panel);
-        deposerCube();
+            int zoneDepot = getZoneDepotPlusProche();
+            deplacerVers(zoneDepot, panel);
+            deposerCube();
+        }
+        api.envoyerSummary(refId);
     }
 
 

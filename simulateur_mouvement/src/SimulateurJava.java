@@ -30,25 +30,18 @@ public class SimulateurJava extends JFrame {
 
         add(zonePanel, BorderLayout.CENTER);
 
-        Integer[] cubes = {1, 2, 3, 4, 5};
-        JComboBox<Integer> cubeSelector = new JComboBox<>(cubes);
-        cubeSelector.setFont(new Font("Arial", Font.PLAIN, 14));
+//        Integer[] cubes = {1, 2, 3, 4, 5};
+//        JComboBox<Integer> cubeSelector = new JComboBox<>(cubes);
+//        cubeSelector.setFont(new Font("Arial", Font.PLAIN, 14));
 
-        JButton bouton = new JButton("Aller chercher un cube");
+        JButton bouton = new JButton("Commencer");
         bouton.setFont(new Font("Arial", Font.BOLD, 16));
         bouton.addActionListener(e -> {
-            Integer selectedCube = (Integer) cubeSelector.getSelectedItem();
-            ArrayList<Integer> blocks = new ArrayList<>();
-            blocks.add(selectedCube);
-            robot.getApi().envoyerInstruction(robot.getRefId(), blocks);
             this.robotAction(robot);
         });
 
         JPanel topPanel = new JPanel(new FlowLayout());
-        topPanel.add(new JLabel("Choisir un cube :"));
-        topPanel.add(cubeSelector);
         topPanel.add(bouton);
-
         add(topPanel, BorderLayout.NORTH);
 
         logArea = new JTextArea(15, 20);

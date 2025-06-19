@@ -2,11 +2,13 @@ import javax.swing.*;
 import java.awt.*;
 
 class ZonePanel extends JPanel {
-    private static final int NB_ZONES = 8;
+    private static final int NB_ZONES = 10;
+    private static final int NB_COLONNES = 5;
+    private static final int NB_LIGNES = 2;
     private static final int RAYON_ZONE = 50;
-    private static final int MARGE = 30;
+    private static final int MARGE = 40;
 
-    private int positionRobot = 0;
+    private int positionRobot = 1;
 
     public void setPositionRobot(int pos) {
         this.positionRobot = pos;
@@ -19,19 +21,20 @@ class ZonePanel extends JPanel {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        int startX = (getWidth() - (4 * (RAYON_ZONE + MARGE))) / 2;
-        int startY = (getHeight() - (2 * (RAYON_ZONE + MARGE))) / 2;
+        int startX = (getWidth() - (NB_COLONNES * (RAYON_ZONE + MARGE))) / 2;
+        int startY = (getHeight() - (NB_LIGNES * (RAYON_ZONE + MARGE))) / 2;
 
-        for (int i = 0; i < NB_ZONES; i++) {
-            int row = i / 4;
-            int col = i % 4;
+        for (int i = 1; i <= NB_ZONES; i++) {
+            int index = i-1;
+            int row = index / NB_COLONNES;
+            int col = index % NB_COLONNES;
 
             int x = startX + col * (RAYON_ZONE + MARGE);
             int y = startY + row * (RAYON_ZONE + MARGE);
 
             if (i == positionRobot) {
                 g2.setColor(Color.GREEN);
-            } else if (i == 3 || i == 6) {
+            } else if (i == 4 || i == 5 || i == 8 || i == 9) {
                 g2.setColor(new Color(173, 216, 230));
             } else {
                 g2.setColor(Color.LIGHT_GRAY); // Zone vide
@@ -57,13 +60,17 @@ class ZonePanel extends JPanel {
 
     private String getLabel(int position){
         String label = switch (position) {
-            case 0 -> "Départ";
-            case 1 -> "Cube 1";
-            case 2 -> "Cube 2";
-            case 4 -> "Cube 3";
-            case 5 -> "Cube 4";
-            case 7 -> "Cube 5";
-            default -> "Zone de dépôt";
+            case 1 -> "Départ";
+            case 2 -> "Cube Jaune";
+            case 3 -> "Cube Rouge";
+            case 4 -> "Entrée Dépôt 1";
+            case 5 -> "Sortie Dépôt 1";
+            case 6 -> "Cube Rose";
+            case 7 -> "Cube Violet";
+            case 8 -> "Entrée Dépôt 2";
+            case 9 -> "Sortie Dépôt 2";
+            case 10 -> "Cube Vert";
+            default -> "Zone vide";
         };
         return label;
     }

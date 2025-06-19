@@ -8,10 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClientAPI {
+    private final String apiHost = "10.7.5.148";
 
     private void envoyer(String endpoint, String jsonPayload) {
         try {
-            URL url = new URL("http://localhost:8000" + endpoint);
+            URL url = new URL("http://"+ apiHost +":8000" + endpoint);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/json");
@@ -30,34 +31,9 @@ public class ClientAPI {
         }
     }
 
-//    public void envoyerEtat(String refId, int position, boolean hasBox, String objectif) {
-//        JSONObject payload = new JSONObject();
-//        payload.put("ref_id", refId);
-//        payload.put("position", position);
-//        payload.put("has_box", hasBox);
-//        payload.put("objectif", objectif);
-//        envoyer("/etat", payload.toString());
-//    }
-
-//    public void envoyerAction(String refId, String action, int position) {
-//        JSONObject payload = new JSONObject();
-//        payload.put("ref_id", refId);
-//        payload.put("action", action);
-//        payload.put("position", position);
-//        envoyer("/action", payload.toString());
-//    }
-
-    public void envoyerInstruction(String refId, ArrayList<Integer> blocks) {
-        JSONObject payload = new JSONObject();
-        payload.put("robot_id", refId);
-        payload.put("blocks", blocks);
-        payload.put("status", "new");
-        envoyer("/instructions", payload.toString());
-    }
-
     public Instruction recupererInstruction(String refId) {
         try {
-            URL url = new URL("http://localhost:8000/instructions/" + refId);
+            URL url = new URL("http://localhost:8000/instructions?robot_id=" + refId);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             con.setRequestProperty("Accept", "application/json");
@@ -97,7 +73,7 @@ public class ClientAPI {
         JSONObject payload = new JSONObject();
         payload.put("robot_id", refId);
         payload.put("status", status);
-        envoyer("/mission/change_status/"+refId, payload.toString());
+        envoyer("/instructions/change_status/"+refId, payload.toString());
     }
 
     public void envoyerTelemetry(String refId, float vitesse_instant, float ds_ultrasons, String status_deplacement, Integer ligne, boolean status_pince){
@@ -114,6 +90,8 @@ public class ClientAPI {
     public void envoyerSummary(String refId){
         JSONObject payload = new JSONObject();
         payload.put("robot_id", refId);
+        modifierStatusInstruction(refId, "finish");
         envoyer("/summary", payload.toString());
+
     }
 }
