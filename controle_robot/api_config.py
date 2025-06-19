@@ -17,7 +17,7 @@ class ClientAPI:
 
     def recuperer_instruction(self, ref_id):
         try:
-            url = self.base_url + f"/instructions/{ref_id}"
+            url = self.base_url + f"/instructions?robot_id={ref_id}"
             res = urequests.get(url)
             if res.status_code == 200:
                 data = res.json()

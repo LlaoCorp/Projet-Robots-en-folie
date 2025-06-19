@@ -29,38 +29,43 @@ while instruction_getted == False:
         break
 
 # derniere_telemetry = time.time()
+# Gestion de la télémetrie toutes les secondes
+def send_telemetry(message=""):
+    apiConf.envoyer_telemetry(
+        uuid,
+        distanceMesure(),
+        mes_roues.get_statut_deplacement(),
+        (carte_terrain.get_pos_int() + 1),
+        carte_terrain.get_statut_pince()
+    )
+    if message != "":
+        apiConf.envoyer_message(uuid, message)
 
 # Début de la boucle
 if debug_mode != True:
     while True:
         try:
-            # Gestion de la télémetrie toutes les secondes
-            if time.time() - derniere_telemetry >= 1:
-                apiConf.envoyer_telemetry(
-                    uuid,
-                    distanceMesure(),
-                    mes_roues.get_statut_deplacement(),
-                    (carte_terrain.get_pos_int() + 1),
-                    carte_terrain.get_statut_pince()
-                )
-                derniere_telemetry = time.time()
+            # if time.time() - derniere_telemetry >= 1:
+            #     send_telemetry()
+            #     derniere_telemetry = time.time()
 
             if carte_terrain.get_objectif() != carte_terrain.get_pos():
                 already_on = suivre_ligne(already_on, apiConf)
             elif carte_terrain.get_pos()[0] == 'c':
-                apiConf.envoyer_message(uuid, "cherche_cube")
+                send_telemetry("cherche_cube")
                 cherche_cube()
-                apiConf.envoyer_message(uuid, "fin cherche_cube")
+                send_telemetry("fin cherche_cube")
             elif carte_terrain.get_pos() != 'base':
-                apiConf.envoyer_message(uuid, "cherche_container")
+                send_telemetry("cherche_container")
                 cherche_container()
-                apiConf.envoyer_message(uuid, "fin cherche_container")
+                send_telemetry("fin cherche_container")
             else:
+                send_telemetry("retour à la base")
                 mes_roues.stop()
                 break
         except KeyboardInterrupt:
             mes_roues.stop()
-            apiConf.envoyer_message(uuid, "Arrêt manuel")
+            send_telemetry("Arrêt manuel")
             if carte_terrain.get_statut_pince() == True :
                 attraper_cube()
             time.sleep(3)
