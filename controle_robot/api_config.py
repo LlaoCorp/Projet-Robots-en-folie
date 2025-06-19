@@ -36,9 +36,9 @@ class ClientAPI:
     def modifier_statut_instruction(self, ref_id, statut):
         payload = {
             "robot_id": ref_id,
-            "statut": statut
+            "status": statut
         }
-        self.envoyer(f"/instructions/change_statut/{ref_id}", payload)
+        self.envoyer(f"/instructions/change_status/{ref_id}", payload)
 
     def envoyer_telemetry(self, ref_id, ds_ultrasons, statut_deplacement, ligne, statut_pince):
         payload = {
