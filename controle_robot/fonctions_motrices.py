@@ -14,10 +14,9 @@ carte_terrain = carte.Carte()           # Définition de la carte contenant le t
 # MOUVEMENTS
 ##
 def se_retourner(side):
-    """
-    se_retourner permet au robot de se retourner pour retracer son chemin jusqu'au container précédent.
+    """! se_retourner permet au robot de se retourner pour retracer son chemin jusqu'au container précédent.
 
-    :param side: Le sense dans lequel le robot se trouve
+    @param side Le sense dans lequel le robot se trouve
     """ 
     count_lines = 0
     previous_val = 0
@@ -33,32 +32,46 @@ def se_retourner(side):
             previous_val = 1
     print("retourné")
 
-def suivre_ligne(already_on):
+def suivre_ligne(already_on, apiConf):
+    """! Permet de suivre la ligne et de repèrer les checkpoints.
+
+    @param already_on Boolean permettant de definir si le robot est toujours sur la ligne ou non. 
+    @return True, si le robot repère un "checkpoint", sinon False
+    """ 
     if capteur_gauche.value() != 0 and capteur_droite.value() != 0:
+        # Faire une fonction pour le faire chercher le checkpoint même pdt qu'il tourne
         mes_roues.stop()
-        time.sleep(0.5)
+        time.sleep(0.2)
         if already_on == False:
             carte_terrain.increase_pos()
+            apiConf.envoyer_message('72a1834d-98ef-4b46-87f5-5e4c4e82e39a', carte_terrain.get_pos())
         else:
-            mes_roues.avancer()
-            time.sleep(0.2)
+            mes_roues.avancer(1000)
+            time.sleep(0.5)
         return True
     elif capteur_gauche.value() == 0 and capteur_droite.value() == 0:
         mes_roues.avancer()
+        time.sleep(0.01)
     elif capteur_gauche.value() == 0 and capteur_droite.value() != 0:
+        print('capteur droite')
         mes_roues.stop()
-        time.sleep(0.5)
-        mes_roues.gauche(500)
-        time.sleep(0.1)
+        time.sleep(0.2)
+        mes_roues.gauche(1000)
+        time.sleep(0.2)
     else:
+        print('capteur gauche')
         mes_roues.stop()
-        time.sleep(0.5)
-        mes_roues.droite(500)
-        time.sleep(0.1)
+        time.sleep(0.2)
+        mes_roues.droite(1000)
+        time.sleep(0.2)
     return False
 
 # FONCTIONS PRATIQUES
 def distanceMesure():
+    """! Permet de suivre la ligne et de repèrer les checkpoints.
+ 
+    @return la distance entre le capteur et l'obstacle en face.
+    """ 
     pulsor = hcsr04.HCSR04(5,18)
     distance = pulsor.distance_cm()
     return distance
@@ -85,10 +98,10 @@ def cherche_cube():
     # Se cadrer
     mes_roues.reculer()
     time.sleep(0.5)
-    mes_roues.droite()
+    mes_roues.tour_droite(600)
     time.sleep(0.3)
     mes_roues.stop()
-    lacher_cube()
+    lacher_cube() # On ouvre les pinces
 
     # Boucle pour ce mettre à la bonne distance du cube
     while int(distanceMesure()) > 2 or int(distanceMesure()) < 1:
@@ -132,48 +145,9 @@ def cherche_container():
     mes_roues.stop()
     attraper_cube()
     
-    if builtins.len(carte_terrain.get_objectif_list) > 0:
+    if len(carte_terrain.get_objectif_list()) > 0:
         carte_terrain.delete_prev_objectif()
+        print(carte_terrain.get_objectif_list())
         carte_terrain.set_objectif(carte_terrain.get_objectif_list()[0])
     else:
         carte_terrain.set_objectif('base')
-
-    # elif carte_terrain.get_pos()[0] == 's':
-    #     # On centre
-    #     mes_roues.avancer()
-    #     time.sleep(1.5)
-    #     # On va dans la zone
-    #     mes_roues.gauche()
-    #     time.sleep(1)
-    #     mes_roues.stop()
-    #     lacher_cube()
-    #     # On reviens sur la ligne
-    #     mes_roues.droite()
-    #     time.sleep(1)
-    #     mes_roues.stop()
-    # else:
-    #     print("erreur de position")
-
-
-def test_servo2():
-    set_angle(45)
-    print(45)
-    time.sleep(3)
-    
-    set_angle(90)
-    print(90)
-    time.sleep(3)
-
-    set_angle(135)
-    print(135)
-    time.sleep(3)
-
-    set_angle(180)
-    print(180)
-    time.sleep(3)
-    #wait
-    time.sleep(5)
-
-def test_pwm():
-    in1 = PWM(Pin(26), freq=500, duty=500)
-    in2 = PWM(Pin(27), freq=500, duty=500)

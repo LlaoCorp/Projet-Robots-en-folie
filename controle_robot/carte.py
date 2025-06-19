@@ -68,7 +68,7 @@ class Carte:
         self.objectif = _objectif
         
     def delete_prev_objectif(self):
-        self.objectif_list = self.objectif_list.remove(self.objectif_list[0])
+        self.objectif_list.remove(self.objectif_list[0])
 
     def set_objectif_by_int(self, _int_list):
         _objectif = []
