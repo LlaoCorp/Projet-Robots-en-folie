@@ -1,6 +1,14 @@
+/**
+ * @file ZonePanel.java
+ * @brief Panneau graphique représentant la carte des zones du robot.
+ */
+
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Composant Swing pour dessiner les zones et la position du robot.
+ */
 class ZonePanel extends JPanel {
     private static final int NB_ZONES = 10;
     private static final int NB_COLONNES = 5;
@@ -10,6 +18,10 @@ class ZonePanel extends JPanel {
 
     private int positionRobot = 1;
 
+    /**
+     * Met à jour la position du robot à l'écran.
+     * @param pos la nouvelle position du robot
+     */
     public void setPositionRobot(int pos) {
         this.positionRobot = pos;
         repaint();
@@ -25,7 +37,7 @@ class ZonePanel extends JPanel {
         int startY = (getHeight() - (NB_LIGNES * (RAYON_ZONE + MARGE))) / 2;
 
         for (int i = 1; i <= NB_ZONES; i++) {
-            int index = i-1;
+            int index = i - 1;
             int row = index / NB_COLONNES;
             int col = index % NB_COLONNES;
 
@@ -37,11 +49,10 @@ class ZonePanel extends JPanel {
             } else if (i == 4 || i == 5 || i == 8 || i == 9) {
                 g2.setColor(new Color(173, 216, 230));
             } else {
-                g2.setColor(Color.LIGHT_GRAY); // Zone vide
+                g2.setColor(Color.LIGHT_GRAY);
             }
 
             g2.fillOval(x, y, RAYON_ZONE, RAYON_ZONE);
-            g2.setColor(Color.LIGHT_GRAY);
             g2.setColor(Color.BLACK);
             g2.drawOval(x, y, RAYON_ZONE, RAYON_ZONE);
 
@@ -58,8 +69,13 @@ class ZonePanel extends JPanel {
         }
     }
 
-    private String getLabel(int position){
-        String label = switch (position) {
+    /**
+     * Retourne l’étiquette à afficher sous chaque zone.
+     * @param position numéro de la zone
+     * @return texte du label
+     */
+    private String getLabel(int position) {
+        return switch (position) {
             case 1 -> "Départ";
             case 2 -> "Cube Jaune";
             case 3 -> "Cube Rouge";
@@ -72,6 +88,5 @@ class ZonePanel extends JPanel {
             case 10 -> "Cube Vert";
             default -> "Zone vide";
         };
-        return label;
     }
 }

@@ -3,7 +3,15 @@ import datetime
 
 API_HOST = "http://10.7.5.148:8000/"
 
+
 def envoyer_instruction(blocks: list[int], message_label, robot_id):
+    """
+    Envoie une instruction (liste de blocs) au robot spécifié.
+
+    @param blocks: Liste des identifiants de blocs à envoyer
+    @param message_label: Widget Tkinter pour afficher le message de retour
+    @param robot_id: Identifiant du robot concerné
+    """
     try:
         print(robot_id, blocks)
         payload = {
@@ -22,7 +30,15 @@ def envoyer_instruction(blocks: list[int], message_label, robot_id):
     except Exception as e:
         afficher_output(f"Exception : {e}", message_label, "red")
 
+
 def afficher_instruction(text_output=None, robot_id=None):
+    """
+    Récupère et affiche l'instruction en cours pour un robot donné.
+
+    @param text_output: Zone de texte Tkinter pour afficher l'instruction
+    @param robot_id: Identifiant du robot
+    @return: Texte formaté représentant l'instruction ou None
+    """
     try:
         res = requests.get(f"{API_HOST}/instructions?robot_id={robot_id}")
         if res.status_code == 200:
@@ -51,12 +67,25 @@ def afficher_instruction(text_output=None, robot_id=None):
     return None
 
 
-
 def afficher_output(msg, message_label, couleur="black"):
+    """
+    Affiche un message horodaté dans un widget de texte.
+
+    @param msg: Message à afficher
+    @param message_label: Widget Tkinter ciblé
+    @param couleur: Couleur du texte
+    """
     timestamp = datetime.datetime.now().strftime('%H:%M:%S')
     message_label.config(text=f"[{timestamp}] {msg}", fg=couleur)
 
+
 def instruction_en_cours(robot_id: str) -> bool:
+    """
+    Vérifie si une instruction est en cours pour un robot donné.
+
+    @param robot_id: Identifiant du robot
+    @return: True si une instruction est active, False sinon
+    """
     try:
         res = requests.get(f"{API_HOST}/instructions/{robot_id}")
         if res.status_code == 200:
@@ -66,7 +95,14 @@ def instruction_en_cours(robot_id: str) -> bool:
         print(f"Erreur lors de la vérification des instructions : {e}")
     return False
 
+
 def afficher_telemetrie(zone_telemetrie, robot_id):
+    """
+    Récupère et affiche les données de télémétrie pour le robot donné.
+
+    @param zone_telemetrie: Widget Tkinter Text où les données seront affichées
+    @param robot_id: Identifiant du robot
+    """
     try:
         res_instruction = requests.get(f"{API_HOST}/instructions/{robot_id}")
         data = res_instruction.json()

@@ -1,14 +1,25 @@
+/**
+ * @file SimulateurJava.java
+ * @brief Interface graphique principale du simulateur de robot virtuel.
+ */
+
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
+/**
+ * Classe représentant l'interface graphique du simulateur de robot.
+ * Elle permet de démarrer la simulation et d’afficher les logs des actions.
+ */
 public class SimulateurJava extends JFrame {
 
-    private JComboBox<String> cubeSelector;
     private JTextArea logArea;
     private ZonePanel zonePanel;
     private RobotVirtuel robot;
 
+    /**
+     * Point d’entrée principal de l’application.
+     * @param args arguments de ligne de commande
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             SimulateurJava frame = new SimulateurJava();
@@ -16,10 +27,12 @@ public class SimulateurJava extends JFrame {
         });
     }
 
+    /**
+     * Constructeur : initialise les composants graphiques.
+     */
     public SimulateurJava() {
         robot = new RobotVirtuel();
         zonePanel = new ZonePanel();
-
         robot.setSimulateur(this);
 
         setTitle("Simulateur REF");
@@ -30,15 +43,9 @@ public class SimulateurJava extends JFrame {
 
         add(zonePanel, BorderLayout.CENTER);
 
-//        Integer[] cubes = {1, 2, 3, 4, 5};
-//        JComboBox<Integer> cubeSelector = new JComboBox<>(cubes);
-//        cubeSelector.setFont(new Font("Arial", Font.PLAIN, 14));
-
         JButton bouton = new JButton("Commencer");
         bouton.setFont(new Font("Arial", Font.BOLD, 16));
-        bouton.addActionListener(e -> {
-            this.robotAction(robot);
-        });
+        bouton.addActionListener(e -> this.robotAction(robot));
 
         JPanel topPanel = new JPanel(new FlowLayout());
         topPanel.add(bouton);
@@ -53,9 +60,12 @@ public class SimulateurJava extends JFrame {
         rightPanel.add(scrollPane, BorderLayout.CENTER);
 
         add(rightPanel, BorderLayout.EAST);
-
     }
 
+    /**
+     * Lance l’exécution de la mission du robot dans un thread.
+     * @param robot le robot à utiliser
+     */
     public void robotAction(RobotVirtuel robot) {
         new Thread(() -> {
             try {
@@ -66,6 +76,10 @@ public class SimulateurJava extends JFrame {
         }).start();
     }
 
+    /**
+     * Ajoute un message à la zone de log.
+     * @param texte texte à afficher
+     */
     public void ajouterInstruction(String texte) {
         SwingUtilities.invokeLater(() -> {
             logArea.append(texte + "\n");

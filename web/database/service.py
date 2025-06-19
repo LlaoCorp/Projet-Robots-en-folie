@@ -1,7 +1,20 @@
+## @file service.py
+#  @brief Fonctions de service pour la manipulation de la base de données SQLite.
+#  Fournit des opérations CRUD pour les robots, les instructions, la télémétrie,
+#  les résumés, les messages et les statistiques de missions.
+
 import sqlite3
+
+## @brief Établit une connexion à la base de données.
+#  @return Connexion SQLite3
 
 def get_db():
     return sqlite3.connect("base.db")
+
+## @brief Crée un nouveau robot dans la base si l'ID n'existe pas.
+#  @param id Identifiant unique du robot
+#  @param name Nom du robot
+#  @return True si créé, False si ID existe déjà
 
 def create_robot(id: str, name: str):
     conn = get_db()
@@ -13,6 +26,12 @@ def create_robot(id: str, name: str):
     conn.commit()
     conn.close()
     return True
+
+## @brief Enregistre une instruction pour un robot existant.
+#  @param robot_id ID du robot
+#  @param blocks Liste des blocs (str)
+#  @param status Statut de l'instruction (ex: 'new')
+#  @return True si succès, False si robot introuvable
 
 def enregistrer_instruction(robot_id: str, blocks: list, status: str):
     conn = get_db()
@@ -27,6 +46,10 @@ def enregistrer_instruction(robot_id: str, blocks: list, status: str):
     conn.commit()
     conn.close()
     return True
+
+## @brief Récupère la dernière instruction avec statut 'new' pour un robot.
+#  @param robot_id ID du robot
+#  @return Dictionnaire avec instruction ou None
 
 def get_current_instruction(robot_id: str):
     conn = get_db()
@@ -43,6 +66,10 @@ def get_current_instruction(robot_id: str):
         return {"robot_id": robot_id, "blocks": row[0], "status": row[1]}
     return None
 
+## @brief Récupère toutes les instructions pour un robot.
+#  @param robot_id ID du robot
+#  @return Liste d'instructions
+
 def get_instructions(robot_id: str):
     conn = get_db()
     cursor = conn.cursor()
@@ -56,6 +83,11 @@ def get_instructions(robot_id: str):
     instructions = [{"blocks": row[0]} for row in rows]
     conn.close()
     return instructions
+
+## @brief Change le statut de la dernière instruction 'new' d’un robot.
+#  @param robot_id ID du robot
+#  @param status Nouveau statut à appliquer
+#  @return True si modification effectuée, False sinon
 
 def changer_status_instruction(robot_id: str, status: str):
     conn = get_db()
@@ -71,6 +103,9 @@ def changer_status_instruction(robot_id: str, status: str):
     conn.close()
     return updated > 0
 
+## @brief Enregistre une entrée de télémétrie pour un robot.
+#  @param telemetry Données de télémétrie (objet avec attributs)
+
 def enregistrer_telemetry(telemetry):
     print(telemetry)
     conn = get_db()
@@ -81,6 +116,10 @@ def enregistrer_telemetry(telemetry):
     """, (telemetry.robot_id, telemetry.vitesse_instant, telemetry.ds_ultrasons, telemetry.statut_deplacement, telemetry.ligne, telemetry.statut_pince))
     conn.commit()
     conn.close()
+
+## @brief Récupère la dernière télémétrie d’un robot.
+#  @param robot_id ID du robot
+#  @return Dictionnaire des données ou None
 
 def recuperer_telemetry(robot_id: str):
     conn = get_db()
@@ -104,6 +143,9 @@ def recuperer_telemetry(robot_id: str):
         }
     return None
 
+## @brief Enregistre un résumé de mission pour un robot.
+#  @param summary Objet contenant l'ID du robot
+
 def enregistrer_summary(summary):
     conn = get_db()
     cursor = conn.cursor()
@@ -114,6 +156,11 @@ def enregistrer_summary(summary):
     conn.commit()
     conn.close()
 
+##
+# @brief Ajoute un message dans la table de test `messages`.
+# @param ref_id ID du robot.
+# @param contenu Message à enregistrer.
+
 def ajouter_message(ref_id, contenu):
     conn = get_db()
     cursor = conn.cursor()
@@ -121,11 +168,19 @@ def ajouter_message(ref_id, contenu):
     conn.commit()
     conn.close()
 
+##
+# @brief Récupère tous les messages (utilisé pour les tests).
+# @return Liste de messages sous forme de dictionnaires.
+
 def recuperer_messages():
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("SELECT ref_id, contenu FROM messages")
     return [{"ref_id": row[0], "contenu": row[1]} for row in cursor.fetchall()]
+
+## @brief Récupère la durée des missions déjà exécutées utilisé dans une idée de réalisation des bonus.
+#  @param robot_id ID du robot
+#  @return Liste de durées (secondes)
 
 def recuperer_temps_missions(robot_id: str):
     conn = get_db()
