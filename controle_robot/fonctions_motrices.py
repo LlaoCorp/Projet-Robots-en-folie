@@ -56,22 +56,22 @@ def suivre_ligne(already_on, apiConf):
         print('capteur droite')
         mes_roues.stop()
         time.sleep(0.2)
-        for i in range(4)
-            mes_roues.gauche(1000)
-            time.sleep(0.05)
-            if capteur_gauche.value() != 0 and capteur_droite.value() != 0:
-                mes_roues.stop()
-                return False
+        # for i in range(4):
+        mes_roues.gauche(1000)
+        time.sleep(0.2)
+            # if capteur_gauche.value() != 0 and capteur_droite.value() != 0:
+            #     mes_roues.stop()
+            #     return False
     else:
         print('capteur gauche')
         mes_roues.stop()
         time.sleep(0.2)
-        for i in range(4)
-            mes_roues.droite(1000)
-            time.sleep(0.05)
-            if capteur_gauche.value() != 0 and capteur_droite.value() != 0:
-                mes_roues.stop()
-                return False
+        # for i in range(4):
+        mes_roues.droite(1000)
+        time.sleep(0.2)
+            # if capteur_gauche.value() != 0 and capteur_droite.value() != 0:
+            #     mes_roues.stop()
+            #     return False
     return False
 
 # FONCTIONS PRATIQUES
@@ -108,13 +108,20 @@ def cherche_cube():
     """! Permet de trouver le cube, le prendre puis, revenir sur la ligne. """
     # Se cadrer
     mes_roues.reculer(1000)
-    time.sleep(0.4)
-    mes_roues.gauche(900)
     time.sleep(0.5)
+    print("fin recule")
+
+    # Trouver le cube
+    while int(distanceMesure()) > 20 or int(distanceMesure()) < 1:
+        mes_roues.gauche(800)
+        time.sleep(0.1)
+        mes_roues.stop()
+        time.sleep(0.05)
     mes_roues.stop()
     lacher_cube() # On ouvre les pinces
+    print("cube trouvé")
 
-    # Boucle pour ce mettre à la bonne distance du cube
+    # Boucle pour se mettre à la bonne distance du cube
     while int(distanceMesure()) > 2 or int(distanceMesure()) < 1:
         if int(distanceMesure()) > 2:
             mes_roues.avancer()
@@ -124,16 +131,18 @@ def cherche_cube():
             break
         time.sleep(0.1)
         mes_roues.stop()
+    print("sur le cube")
 
     attraper_cube() # On attrape le cube une fois que l'on est bien aligné
     
     # Se remettre sur la ligne
-    while capteur_gauche.value() != 0 or capteur_droite.value() != 0:
+    while capteur_droite.value() != 0:
         mes_roues.reculer(800)
         time.sleep(0.1)
     mes_roues.droite(800)
-    time.sleep(0.4)
+    time.sleep(0.5)
     mes_roues.stop()
+    print("Sur la ligne")
     carte_terrain.set_objectif(carte_terrain.get_best_container())
 
 def cherche_container():
@@ -149,19 +158,19 @@ def cherche_container():
     time.sleep(1)
 
     # On va dans la zone
-    mes_roues.gauche(900)
-    time.sleep(0.5)
+    mes_roues.gauche(1000)
+    time.sleep(0.7)
     mes_roues.avancer(1000)
     time.sleep(0.5)
     mes_roues.stop()
     lacher_cube()
 
     # On reviens sur la ligne
-    while capteur_gauche.value() != 0 or capteur_droite.value() != 0:
+    while capteur_droite.value() != 0:
         mes_roues.reculer(800)
         time.sleep(0.1)
-    mes_roues.droite(900)
-    time.sleep(0.3)
+    mes_roues.droite(800)
+    time.sleep(0.5)
     mes_roues.stop()
     attraper_cube()
 
